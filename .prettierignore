@@ -1,0 +1,18 @@
+# Package managers
+node_modules
+
+# Build output
+.svelte-kit
+build
+dist
+
+# Generated
+package-lock.json
+
+# Environment
+.env
+.env.*
+
+# Docs
+docs/
+project-brief/

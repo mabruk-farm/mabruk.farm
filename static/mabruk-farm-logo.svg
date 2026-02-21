@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120">
+  <!-- Leaf/Water Icon -->
+  <g transform="translate(30, 10)">
+    <!-- Water drop shape -->
+    <path d="M35 8 C35 8, 12 40, 12 58 C12 72, 22 85, 35 85 C48 85, 58 72, 58 58 C58 40, 35 8, 35 8Z" fill="#1B5E20" opacity="0.9"/>
+    <!-- Inner leaf vein -->
+    <path d="M35 25 L35 70" stroke="#E8F5E9" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+    <path d="M35 40 L25 50" stroke="#E8F5E9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M35 40 L45 50" stroke="#E8F5E9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M35 52 L27 60" stroke="#E8F5E9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <path d="M35 52 L43 60" stroke="#E8F5E9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <!-- Small golden sparkle -->
+    <circle cx="42" cy="30" r="4" fill="#F9A825" opacity="0.9"/>
+    <circle cx="42" cy="30" r="2" fill="#FDD835"/>
+  </g>
+  
+  <!-- Text: mabruk -->
+  <text x="100" y="62" font-family="'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="44" font-weight="800" fill="#1B5E20" letter-spacing="-1">mabruk</text>
+  
+  <!-- Text: .farm -->
+  <text x="292" y="62" font-family="'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="44" font-weight="800" fill="#4CAF50" letter-spacing="-1">.farm</text>
+  
+  <!-- Tagline -->
+  <text x="102" y="85" font-family="'Plus Jakarta Sans', 'Segoe UI', sans-serif" font-size="13" font-weight="500" fill="#666666" letter-spacing="3">SAYURAN BERKAH DARI GUNUNG SARI</text>
+</svg>
