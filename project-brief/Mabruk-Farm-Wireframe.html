@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mabruk Farm — Wireframe Layout</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f0f0; color: #1a1a1a; }
+  
+  .page-nav { position: sticky; top: 0; z-index: 100; background: #1B5E20; padding: 12px 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .page-nav a { color: #fff; text-decoration: none; font-size: 13px; padding: 6px 14px; border-radius: 20px; background: rgba(255,255,255,0.15); transition: all 0.2s; font-weight: 500; }
+  .page-nav a:hover, .page-nav a.active { background: #fff; color: #1B5E20; }
+  .page-nav .title { color: #E8F5E9; font-weight: 700; font-size: 14px; margin-right: 12px; letter-spacing: 1px; }
+  
+  .page-section { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+  .page-header { background: #1B5E20; color: #fff; padding: 24px 32px; }
+  .page-header h2 { font-size: 22px; font-weight: 700; }
+  .page-header p { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+  .page-body { padding: 32px; }
+  
+  .wire { border: 2px dashed #ccc; border-radius: 12px; padding: 20px; margin-bottom: 20px; position: relative; }
+  .wire::before { content: attr(data-label); position: absolute; top: -10px; left: 16px; background: #F9A825; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 10px; letter-spacing: 0.5px; }
+  .wire.hero { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .wire.hero h3 { font-size: 24px; color: #1B5E20; font-weight: 800; max-width: 500px; }
+  .wire.hero p { color: #666; font-size: 14px; margin-top: 8px; max-width: 450px; }
+  .wire.hero .btn { margin-top: 16px; background: #25D366; color: #fff; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-block; }
+  
+  .wire-grid { display: grid; gap: 16px; }
+  .wire-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .wire-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .wire-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  
+  .wire-card { border: 1.5px solid #e0e0e0; border-radius: 10px; overflow: hidden; background: #fff; }
+  .wire-card .img { background: #E8F5E9; height: 120px; display: flex; align-items: center; justify-content: center; color: #4CAF50; font-size: 12px; font-weight: 600; position: relative; }
+  .wire-card .img .badge { position: absolute; top: 8px; right: 8px; background: #F9A825; color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .wire-card .info { padding: 12px; }
+  .wire-card .info h4 { font-size: 14px; font-weight: 700; color: #1B5E20; }
+  .wire-card .info .price { font-size: 13px; color: #F9A825; font-weight: 700; margin-top: 4px; }
+  .wire-card .info .btn-sm { display: inline-block; margin-top: 8px; background: #25D366; color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  
+  .badge-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .badge-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 20px; background: #FAFAFA; border-radius: 12px; min-width: 140px; }
+  .badge-item .icon { font-size: 28px; }
+  .badge-item .label { font-size: 12px; font-weight: 600; color: #1B5E20; text-align: center; }
+  
+  .wire-testimonial { background: #E8F5E9; border-radius: 10px; padding: 20px; }
+  .wire-testimonial .quote { font-size: 14px; font-style: italic; color: #333; line-height: 1.6; }
+  .wire-testimonial .author { margin-top: 10px; font-size: 12px; font-weight: 700; color: #1B5E20; }
+  
+  .wire-cta { background: #1B5E20; border-radius: 12px; padding: 32px; text-align: center; color: #fff; }
+  .wire-cta h3 { font-size: 20px; font-weight: 700; }
+  .wire-cta p { font-size: 14px; opacity: 0.8; margin-top: 8px; }
+  .wire-cta .btn { display: inline-block; margin-top: 16px; background: #F9A825; color: #fff; padding: 10px 24px; border-radius: 8px; font-weight: 600; }
+  
+  .wire-nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 10px; }
+  .wire-nav .logo { font-size: 18px; font-weight: 800; color: #1B5E20; }
+  .wire-nav .logo span { color: #4CAF50; }
+  .wire-nav .links { display: flex; gap: 20px; font-size: 13px; font-weight: 500; color: #666; }
+  .wire-nav .cta-btn { background: #25D366; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+  
+  .wire-footer { background: #1A1A1A; border-radius: 12px; padding: 32px; display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 24px; color: #ccc; font-size: 13px; }
+  .wire-footer h4 { color: #4CAF50; font-size: 14px; margin-bottom: 10px; }
+  .wire-footer a { color: #aaa; text-decoration: none; }
+  .wire-footer .copyright { grid-column: 1 / -1; text-align: center; color: #666; font-size: 11px; border-top: 1px solid #333; padding-top: 16px; margin-top: 8px; }
+  
+  .floating { position: relative; }
+  .floating .wa-btn { position: absolute; bottom: 20px; right: 20px; width: 48px; height: 48px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; box-shadow: 0 4px 12px rgba(37,211,102,0.4); }
+  .floating .chat-btn { position: absolute; bottom: 80px; right: 20px; width: 48px; height: 48px; background: #1B5E20; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  
+  .form-wire { display: flex; flex-direction: column; gap: 12px; max-width: 500px; }
+  .form-wire .field { border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #999; background: #FAFAFA; }
+  .form-wire .field.textarea { min-height: 80px; }
+  .form-wire .submit-btn { background: #1B5E20; color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; text-align: center; }
+  
+  .step-timeline { display: flex; gap: 4px; }
+  .step-timeline .step { flex: 1; text-align: center; padding: 16px 8px; background: #FAFAFA; border-radius: 10px; }
+  .step-timeline .step .num { width: 28px; height: 28px; background: #1B5E20; color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .step-timeline .step .label { display: block; margin-top: 8px; font-size: 11px; font-weight: 600; color: #333; }
+  
+  .note { background: #FFF8E1; border-left: 3px solid #F9A825; padding: 10px 16px; font-size: 12px; color: #795548; margin-bottom: 16px; border-radius: 0 8px 8px 0; }
+  
+  .section-label { font-size: 16px; font-weight: 700; color: #1B5E20; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #E8F5E9; }
+  
+  .tier-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tier-table th { background: #1B5E20; color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; }
+  .tier-table td { padding: 10px 14px; border-bottom: 1px solid #eee; }
+  .tier-table tr:nth-child(even) { background: #F5F5F5; }
+  
+  @media (max-width: 768px) {
+    .wire-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    .wire-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+    .wire-footer { grid-template-columns: 1fr; }
+    .step-timeline { flex-wrap: wrap; }
+    .step-timeline .step { min-width: calc(33% - 4px); }
+    .badge-row { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <span class="title">WIREFRAME</span>
+  <a href="#homepage" class="active">Homepage</a>
+  <a href="#produk">Produk</a>
+  <a href="#tentang">Tentang</a>
+  <a href="#kerjasama">Kerjasama</a>
+  <a href="#blog">Blog</a>
+  <a href="#kontak">Kontak</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════ HOMEPAGE ═══ -->
+<div class="page-section" id="homepage">
+  <div class="page-header">
+    <h2>Homepage ( / )</h2>
+    <p>Landing page utama — konversi pengunjung jadi pembeli</p>
+  </div>
+  <div class="page-body">
+    
+    <div class="wire" data-label="NAVBAR">
+      <div class="wire-nav">
+        <div class="logo">mabruk<span>.farm</span></div>
+        <div class="links">Produk &nbsp; Tentang &nbsp; Kerjasama &nbsp; Blog &nbsp; Kontak</div>
+        <div class="cta-btn">📱 Pesan via WA</div>
+      </div>
+    </div>
+
+    <div class="wire hero" data-label="HERO SECTION">
+      <h3>Sayuran Segar Tanpa Pestisida, Langsung dari Gunung Sari</h3>
+      <p>Dipanen pagi ini di greenhouse kami — sampai di meja Anda besok.</p>
+      <div class="btn">📱 Pesan Sekarang via WhatsApp</div>
+    </div>
+
+    <div class="wire" data-label="TRUST BADGES">
+      <div class="badge-row">
+        <div class="badge-item"><span class="icon">🌿</span><span class="label">Tanpa Pestisida<br>100%</span></div>
+        <div class="badge-item"><span class="icon">🌅</span><span class="label">Dipanen Segar<br>Tiap Hari</span></div>
+        <div class="badge-item"><span class="icon">🧪</span><span class="label">Nutrisi<br>Terkontrol</span></div>
+        <div class="badge-item"><span class="icon">📦</span><span class="label">Suplai Konsisten<br>Sepanjang Tahun</span></div>
+      </div>
+    </div>
+
+    <div class="wire" data-label="PRODUCT SHOWCASE">
+      <div class="section-label">Produk Unggulan Kami</div>
+      <div class="wire-grid cols-3">
+        <div class="wire-card"><div class="img">📷 Foto Pakcoy<div class="badge">Best Seller</div></div><div class="info"><h4>Pakcoy Hidroponik</h4><div class="price">Rp 25.000/kg</div><div class="btn-sm">Pesan via WA</div></div></div>
+        <div class="wire-card"><div class="img">📷 Foto Selada Hijau<div class="badge">Premium</div></div><div class="info"><h4>Selada Hijau</h4><div class="price">Rp 35.000/kg</div><div class="btn-sm">Pesan via WA</div></div></div>
+        <div class="wire-card"><div class="img">📷 Foto Selada Merah<div class="badge">Premium</div></div><div class="info"><h4>Selada Merah</h4><div class="price">Rp 40.000/kg</div><div class="btn-sm">Pesan via WA</div></div></div>
+        <div class="wire-card"><div class="img">📷 Foto Kangkung</div><div class="info"><h4>Kangkung Hidroponik</h4><div class="price">Rp 20.000/kg</div><div class="btn-sm">Pesan via WA</div></div></div>
+        <div class="wire-card"><div class="img">📷 Foto Bayam</div><div class="info"><h4>Bayam Hidroponik</h4><div class="price">Rp 22.000/kg</div><div class="btn-sm">Pesan via WA</div></div></div>
+        <div class="wire-card"><div class="img">📷 Foto Sawi<div class="badge">Best Seller</div></div><div class="info"><h4>Sawi / Samhong</h4><div class="price">Rp 23.000/kg</div><div class="btn-sm">Pesan via WA</div></div></div>
+      </div>
+    </div>
+
+    <div class="wire" data-label="TENTANG SINGKAT">
+      <div class="section-label">Cerita di Balik Mabruk Farm</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <p style="font-size:14px;color:#666;line-height:1.7;">"Mabruk" berarti berkah. Kami percaya makanan yang baik dimulai dari cara menanam yang baik. Berawal dari greenhouse kecil di Desa Gunung Sari — didirikan oleh Andri & Aan, dua bersaudara yang percaya pertanian modern bisa memberdayakan desa.</p>
+          <div style="margin-top:16px;color:#1B5E20;font-weight:600;font-size:14px;">Kenali Kami Lebih Dekat →</div>
+        </div>
+        <div style="background:#E8F5E9;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#4CAF50;font-size:13px;font-weight:600;min-height:150px;">📷 Foto Greenhouse / Tim</div>
+      </div>
+    </div>
+
+    <div class="wire" data-label="TESTIMONIALS">
+      <div class="section-label">Dipercaya oleh</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;justify-content:center;">
+        <div style="background:#f5f5f5;padding:8px 20px;border-radius:8px;font-size:12px;color:#999;">Logo MBG</div>
+        <div style="background:#f5f5f5;padding:8px 20px;border-radius:8px;font-size:12px;color:#999;">Logo Hotel</div>
+        <div style="background:#f5f5f5;padding:8px 20px;border-radius:8px;font-size:12px;color:#999;">Logo Restoran</div>
+      </div>
+      <div class="wire-grid cols-3">
+        <div class="wire-testimonial"><div class="quote">"Sejak pakai sayuran dari Mabruk Farm, tamu hotel kami selalu memuji kesegaran saladnya."</div><div class="author">— [Nama], Hotel [X]</div></div>
+        <div class="wire-testimonial"><div class="quote">"Untuk MBG, kami butuh sayuran bersih dan bergizi. Mabruk Farm jadi partner andalan."</div><div class="author">— [Nama], Satgas MBG</div></div>
+        <div class="wire-testimonial"><div class="quote">"Langganan tiap minggu. Sayurnya tahan lama dan anak-anak suka!"</div><div class="author">— [Nama], Ibu RT</div></div>
+      </div>
+    </div>
+
+    <div class="wire" data-label="B2B CTA">
+      <div class="wire-cta">
+        <h3>Butuh Suplai Sayuran Segar untuk Bisnis Anda?</h3>
+        <p>Supply contract untuk hotel, restoran, katering, supermarket, dan MBG.</p>
+        <div class="btn">🤝 Ajukan Kerjasama</div>
+      </div>
+    </div>
+
+    <div class="wire" data-label="BLOG PREVIEW">
+      <div class="section-label">Dari Greenhouse Kami</div>
+      <div class="wire-grid cols-3">
+        <div class="wire-card"><div class="img" style="height:100px;">📷 Cover Blog 1</div><div class="info"><h4 style="font-size:13px;">Kenalan dengan Mabruk Farm</h4><p style="font-size:11px;color:#999;margin-top:4px;">Behind the Scenes • 5 min</p></div></div>
+        <div class="wire-card"><div class="img" style="height:100px;">📷 Cover Blog 2</div><div class="info"><h4 style="font-size:13px;">5 Alasan Sayur Hidroponik Lebih Sehat</h4><p style="font-size:11px;color:#999;margin-top:4px;">Edukasi • 7 min</p></div></div>
+        <div class="wire-card"><div class="img" style="height:100px;">📷 Cover Blog 3</div><div class="info"><h4 style="font-size:13px;">Cara Order Sayur dari Mabruk Farm</h4><p style="font-size:11px;color:#999;margin-top:4px;">Tips • 3 min</p></div></div>
+      </div>
+    </div>
+
+    <div class="wire" data-label="FOOTER">
+      <div class="wire-footer">
+        <div><h4>Mabruk Farm</h4><p>Sayuran Berkah, Segar Tanpa Pestisida dari Gunung Sari</p><p style="margin-top:8px;">Desa Gunung Sari, Kec. Way Khilau, Kab. Pesawaran, Lampung</p></div>
+        <div><h4>Menu</h4><p><a href="#">Produk</a></p><p><a href="#">Tentang</a></p><p><a href="#">Kerjasama</a></p><p><a href="#">Blog</a></p><p><a href="#">Kontak</a></p></div>
+        <div><h4>Hubungi Kami</h4><p>📱 0852-6945-8526</p><p>📷 @mabruk.farm</p><p>📧 halo@mabruk.farm</p><p>⏰ Sen-Sab, 07:00-17:00</p></div>
+        <div class="copyright">© 2026 PT Mabruk Agro Lestari. Hak cipta dilindungi.</div>
+      </div>
+    </div>
+
+    <div class="wire floating" data-label="FLOATING BUTTONS" style="min-height:120px;background:#fafafa;">
+      <div class="note">Tombol floating selalu visible di setiap halaman</div>
+      <div class="chat-btn">💬</div>
+      <div class="wa-btn">📱</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PRODUK ═══ -->
+<div class="page-section" id="produk">
+  <div class="page-header">
+    <h2>Halaman Produk ( /produk )</h2>
+    <p>Katalog semua produk + detail per produk</p>
+  </div>
+  <div class="page-body">
+    <div class="wire" data-label="PAGE HEADER">
+      <h3 style="font-size:20px;color:#1B5E20;font-weight:700;">Produk Segar Mabruk Farm</h3>
+      <p style="font-size:14px;color:#666;margin-top:6px;">Semua sayuran kami ditanam hidroponik, tanpa pestisida, nutrisi terkontrol setiap hari.</p>
+    </div>
+    <div class="wire" data-label="FILTER / KATEGORI">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="background:#1B5E20;color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;">Semua</span>
+        <span style="background:#E8F5E9;color:#1B5E20;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;">Sayuran Daun</span>
+        <span style="background:#E8F5E9;color:#1B5E20;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;">Sayuran Premium</span>
+        <span style="background:#E8F5E9;color:#1B5E20;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;">Herbs</span>
+        <span style="background:#f0f0f0;color:#999;padding:6px 16px;border-radius:20px;font-size:13px;">Paket Hemat (soon)</span>
+      </div>
+    </div>
+    <div class="wire" data-label="PRODUCT GRID">
+      <div class="wire-grid cols-3">
+        <div class="wire-card"><div class="img">📷 Pakcoy<div class="badge">Best Seller</div></div><div class="info"><h4>Pakcoy Hidroponik</h4><div class="price">Rp 25.000/kg</div><div style="font-size:11px;color:#999;margin-top:4px;">Masa panen: 25-30 hari</div><div class="btn-sm">Pesan via WA</div></div></div>
+        <div class="wire-card"><div class="img">📷 Selada Hijau<div class="badge">Premium</div></div><div class="info"><h4>Selada Hijau</h4><div class="price">Rp 35.000/kg</div><div style="font-size:11px;color:#999;margin-top:4px;">Masa panen: 30-35 hari</div><div class="btn-sm">Pesan via WA</div></div></div>
+        <div class="wire-card"><div class="img">📷 Kangkung</div><div class="info"><h4>Kangkung Hidroponik</h4><div class="price">Rp 20.000/kg</div><div style="font-size:11px;color:#999;margin-top:4px;">Masa panen: 20-25 hari</div><div class="btn-sm">Pesan via WA</div></div></div>
+      </div>
+      <div class="note" style="margin-top:16px;">Grid 3 kolom (desktop), 2 kolom (tablet), 1 kolom (mobile)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ TENTANG ═══ -->
+<div class="page-section" id="tentang">
+  <div class="page-header">
+    <h2>Tentang Kami ( /tentang )</h2>
+    <p>Storytelling — buat pengunjung merasa "kenal"</p>
+  </div>
+  <div class="page-body">
+    <div class="wire hero" data-label="HERO" style="min-height:150px;">
+      <h3>Berkah dari Gunung Sari</h3>
+      <p style="font-style:italic;">Cerita dua bersaudara yang percaya pertanian modern bisa membawa berkah.</p>
+    </div>
+    <div class="wire" data-label="STORY">
+      <div style="max-width:600px;">
+        <h3 style="font-size:18px;color:#1B5E20;margin-bottom:12px;">Cerita Kami</h3>
+        <p style="font-size:14px;color:#666;line-height:1.8;">Arti "Mabruk" → kenapa didirikan → pilih hidroponik → dari Gunung Sari → visi ke depan. [3-4 paragraf storytelling]</p>
+      </div>
+    </div>
+    <div class="wire" data-label="TIM KAMI">
+      <div class="section-label">Tim Kami</div>
+      <div class="wire-grid cols-2">
+        <div style="text-align:center;">
+          <div style="width:100px;height:100px;background:#E8F5E9;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;color:#4CAF50;font-size:12px;">📷 Andri</div>
+          <h4 style="font-size:16px;color:#1B5E20;">Andri</h4>
+          <p style="font-size:12px;color:#999;">Co-Founder</p>
+          <p style="font-size:13px;color:#666;margin-top:8px;">Strategi, marketing digital, pengembangan bisnis dari Jakarta.</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="width:100px;height:100px;background:#E8F5E9;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;color:#4CAF50;font-size:12px;">📷 Aan</div>
+          <h4 style="font-size:16px;color:#1B5E20;">Aan</h4>
+          <p style="font-size:12px;color:#999;">Co-Founder</p>
+          <p style="font-size:13px;color:#666;margin-top:8px;">Operasional greenhouse, perawatan, panen, distribusi di Gunung Sari.</p>
+        </div>
+      </div>
+    </div>
+    <div class="wire" data-label="PROSES KAMI">
+      <div class="section-label">Proses Kami</div>
+      <div class="step-timeline">
+        <div class="step"><span class="num">1</span><span class="label">Semai</span></div>
+        <div class="step"><span class="num">2</span><span class="label">Tanam</span></div>
+        <div class="step"><span class="num">3</span><span class="label">Rawat</span></div>
+        <div class="step"><span class="num">4</span><span class="label">Panen</span></div>
+        <div class="step"><span class="num">5</span><span class="label">Kemas</span></div>
+        <div class="step"><span class="num">6</span><span class="label">Kirim</span></div>
+      </div>
+    </div>
+    <div class="wire" data-label="LOKASI + MAPS">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div><h4 style="color:#1B5E20;">Lokasi Kami</h4><p style="font-size:14px;color:#666;margin-top:8px;">Desa Gunung Sari, Kec. Way Khilau, Kab. Pesawaran, Lampung<br><br>±30-45 menit dari Bandar Lampung</p></div>
+        <div style="background:#E8F5E9;border-radius:10px;min-height:150px;display:flex;align-items:center;justify-content:center;color:#4CAF50;font-size:13px;">🗺 Google Maps Embed</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ KERJASAMA ═══ -->
+<div class="page-section" id="kerjasama">
+  <div class="page-header">
+    <h2>Kerjasama B2B ( /kerjasama )</h2>
+    <p>Untuk decision maker — profesional & data-driven</p>
+  </div>
+  <div class="page-body">
+    <div class="wire hero" data-label="HERO" style="min-height:130px;">
+      <h3>Partner Suplai Sayuran Segar untuk Bisnis Anda</h3>
+      <p>Hotel, restoran, katering, supermarket, dan program MBG.</p>
+    </div>
+    <div class="wire" data-label="KEUNGGULAN">
+      <div class="section-label">Keunggulan Kerjasama</div>
+      <div class="wire-grid cols-3">
+        <div style="text-align:center;padding:16px;background:#fafafa;border-radius:10px;"><div style="font-size:24px;">📋</div><div style="font-weight:700;font-size:13px;color:#1B5E20;margin-top:8px;">Supply Contract</div><div style="font-size:12px;color:#666;margin-top:4px;">Volume & jadwal disepakati</div></div>
+        <div style="text-align:center;padding:16px;background:#fafafa;border-radius:10px;"><div style="font-size:24px;">💰</div><div style="font-weight:700;font-size:13px;color:#1B5E20;margin-top:8px;">Harga Kompetitif</div><div style="font-size:12px;color:#666;margin-top:4px;">Tiering berdasarkan volume</div></div>
+        <div style="text-align:center;padding:16px;background:#fafafa;border-radius:10px;"><div style="font-size:24px;">🚚</div><div style="font-weight:700;font-size:13px;color:#1B5E20;margin-top:8px;">Pengiriman Terjadwal</div><div style="font-size:12px;color:#666;margin-top:4px;">Langsung ke lokasi Anda</div></div>
+      </div>
+    </div>
+    <div class="wire" data-label="PRICING TIERS">
+      <div class="section-label">Minimum Order & Pricing</div>
+      <table class="tier-table">
+        <tr><th>Tier</th><th>Volume/Minggu</th><th>Diskon</th><th>Cocok Untuk</th></tr>
+        <tr><td>Starter</td><td>5-20 kg</td><td>Harga retail</td><td>Kafe kecil, warung</td></tr>
+        <tr><td>Business</td><td>20-50 kg</td><td>Diskon 10%</td><td>Restoran, hotel kecil</td></tr>
+        <tr><td>Enterprise</td><td>50-200 kg</td><td>Diskon 15-20%</td><td>Hotel besar, supermarket, MBG</td></tr>
+      </table>
+    </div>
+    <div class="wire" data-label="FORM INQUIRY">
+      <div class="section-label">Ajukan Kerjasama</div>
+      <div class="form-wire">
+        <div class="field">Nama Lengkap</div>
+        <div class="field">Nama Perusahaan / Bisnis</div>
+        <div class="field">Jabatan</div>
+        <div class="field">No. WhatsApp</div>
+        <div class="field">Email</div>
+        <div class="field">Jenis Bisnis: Hotel / Restoran / Katering / Supermarket / MBG / Lainnya</div>
+        <div class="field">Estimasi kebutuhan per minggu (kg)</div>
+        <div class="field textarea">Pesan tambahan</div>
+        <div class="submit-btn">🤝 Ajukan Kerjasama</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ BLOG ═══ -->
+<div class="page-section" id="blog">
+  <div class="page-header">
+    <h2>Blog ( /blog )</h2>
+    <p>SEO weapon — artikel edukatif & storytelling</p>
+  </div>
+  <div class="page-body">
+    <div class="wire" data-label="BLOG LISTING">
+      <div class="section-label">Dari Greenhouse Kami</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <span style="background:#1B5E20;color:#fff;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;">Semua</span>
+        <span style="background:#E8F5E9;color:#1B5E20;padding:5px 14px;border-radius:20px;font-size:12px;">Edukasi</span>
+        <span style="background:#E8F5E9;color:#1B5E20;padding:5px 14px;border-radius:20px;font-size:12px;">Behind the Scenes</span>
+        <span style="background:#E8F5E9;color:#1B5E20;padding:5px 14px;border-radius:20px;font-size:12px;">Resep</span>
+        <span style="background:#E8F5E9;color:#1B5E20;padding:5px 14px;border-radius:20px;font-size:12px;">Tips</span>
+      </div>
+      <div class="wire-grid cols-2">
+        <div class="wire-card"><div class="img" style="height:140px;">📷 Cover: Greenhouse Mabruk Farm</div><div class="info"><span style="font-size:11px;color:#4CAF50;font-weight:600;">Behind the Scenes</span><h4 style="margin-top:4px;">Kenalan dengan Mabruk Farm: Hidroponik Modern dari Gunung Sari</h4><p style="font-size:12px;color:#999;margin-top:6px;">Cerita awal mula Mabruk Farm dan kenapa kami memilih hidroponik...</p><p style="font-size:11px;color:#ccc;margin-top:8px;">20 Feb 2026 • 5 min read</p></div></div>
+        <div class="wire-card"><div class="img" style="height:140px;">📷 Cover: Sayuran segar close-up</div><div class="info"><span style="font-size:11px;color:#4CAF50;font-weight:600;">Edukasi</span><h4 style="margin-top:4px;">5 Alasan Sayur Hidroponik Lebih Sehat dari Konvensional</h4><p style="font-size:12px;color:#999;margin-top:6px;">Banyak yang tanya: emang beda ya? Yuk kita bahas satu per satu...</p><p style="font-size:11px;color:#ccc;margin-top:8px;">25 Feb 2026 • 7 min read</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ KONTAK ═══ -->
+<div class="page-section" id="kontak">
+  <div class="page-header">
+    <h2>Kontak ( /kontak )</h2>
+    <p>Semua channel komunikasi + form</p>
+  </div>
+  <div class="page-body">
+    <div class="wire" data-label="KONTAK INFO + FORM">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;">
+        <div>
+          <div class="section-label">Hubungi Kami</div>
+          <div style="font-size:14px;color:#666;line-height:2.2;">
+            📱 <strong>WhatsApp:</strong> 0852-6945-8526<br>
+            📷 <strong>Instagram:</strong> @mabruk.farm<br>
+            📧 <strong>Email:</strong> halo@mabruk.farm<br>
+            📍 <strong>Alamat:</strong> Desa Gunung Sari, Kec. Way Khilau, Kab. Pesawaran, Lampung<br>
+            ⏰ <strong>Jam:</strong> Senin – Sabtu, 07:00 – 17:00 WIB
+          </div>
+        </div>
+        <div>
+          <div class="section-label">Kirim Pesan</div>
+          <div class="form-wire">
+            <div class="field">Nama</div>
+            <div class="field">WhatsApp / Email</div>
+            <div class="field">Subjek: Pesan Produk / Pertanyaan / Kerjasama / Lainnya</div>
+            <div class="field textarea">Pesan</div>
+            <div class="submit-btn">Kirim Pesan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wire" data-label="GOOGLE MAPS">
+      <div style="background:#E8F5E9;border-radius:10px;min-height:200px;display:flex;align-items:center;justify-content:center;color:#4CAF50;font-size:14px;font-weight:600;">🗺 Google Maps Embed — Mabruk Farm, Gunung Sari</div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:40px;color:#999;font-size:13px;">
+  <strong>mabruk.farm</strong> — Wireframe Layout v1.0 — Februari 2026<br>
+  PT Mabruk Agro Lestari
+</div>
+
+</body>
+</html>

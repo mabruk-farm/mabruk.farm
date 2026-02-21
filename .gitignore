@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+.mcp.json
+
+# Build
+.svelte-kit/
+build/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Sanity
+sanity/dist/
+
+# Vercel
+.vercel/
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

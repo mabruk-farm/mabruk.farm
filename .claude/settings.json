@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "LS",
+      "Bash(npm run *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(node *)",
+      "Write",
+      "Edit"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(git push --force)",
+      "Bash(npx sanity dataset delete *)"
+    ]
+  }
+}
