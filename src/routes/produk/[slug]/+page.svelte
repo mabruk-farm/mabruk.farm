@@ -3,9 +3,9 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import ProductCard from '$lib/components/ui/ProductCard.svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
-	import { Leaf, Clock, Apple, Refrigerator } from 'lucide-svelte'
-	import { formatPriceWithUnit } from '$lib/utils/format'
-	import { createOrderLink } from '$lib/utils/whatsapp'
+	import { Leaf, Clock, Apple, Refrigerator, Minus, Plus, Send } from 'lucide-svelte'
+	import { formatPrice, formatPriceWithUnit } from '$lib/utils/format'
+	import { createWhatsAppLink } from '$lib/utils/whatsapp'
 	import { createProductJsonLd, createBreadcrumbJsonLd } from '$lib/utils/seo'
 
 	let { data } = $props()
@@ -46,6 +46,32 @@
 				)
 			: ''
 	)
+
+	let qty = $state(1)
+	let catatan = $state('')
+
+	const subtotal = $derived(product ? product.price * qty : 0)
+
+	function decreaseQty() {
+		if (qty > 1) qty--
+	}
+
+	function increaseQty() {
+		if (qty < 50) qty++
+	}
+
+	function buildOrderLink() {
+		if (!product) return '#'
+		let msg = `Halo Mabruk Farm! Saya mau pesan:\n\n`
+		msg += `${product.name}\n`
+		msg += `Jumlah: ${qty} ${product.unit}\n`
+		msg += `Estimasi: ${formatPrice(subtotal)}\n`
+		if (catatan.trim()) {
+			msg += `\nCatatan: ${catatan.trim()}\n`
+		}
+		msg += `\nTerima kasih!`
+		return createWhatsAppLink(msg)
+	}
 
 	type BadgeVariant = 'bestSeller' | 'premium' | 'favorit' | 'category'
 
@@ -140,10 +166,64 @@
 						</div>
 					</div>
 
-					<div class="mt-8">
-						<Button variant="whatsapp" href={createOrderLink(product.name)} class="px-8 py-3">
+					<!-- Pre-order form -->
+					<div class="mt-8 rounded-xl border border-neutral-200 p-5">
+						<p class="text-sm font-semibold text-neutral-900">Pesan Produk Ini</p>
+
+						<!-- Quantity -->
+						<div class="mt-4 flex items-center gap-3">
+							<span class="text-sm text-neutral-600">Jumlah ({product.unit}):</span>
+							<div class="flex items-center rounded-lg border border-neutral-200">
+								<button
+									onclick={decreaseQty}
+									disabled={qty <= 1}
+									class="flex h-9 w-9 items-center justify-center text-neutral-600 transition-colors hover:bg-neutral-50 disabled:opacity-30"
+									aria-label="Kurangi"
+								>
+									<Minus class="h-4 w-4" />
+								</button>
+								<span
+									class="flex h-9 w-10 items-center justify-center border-x border-neutral-200 text-sm font-semibold text-neutral-900"
+								>
+									{qty}
+								</span>
+								<button
+									onclick={increaseQty}
+									disabled={qty >= 50}
+									class="flex h-9 w-9 items-center justify-center text-neutral-600 transition-colors hover:bg-neutral-50 disabled:opacity-30"
+									aria-label="Tambah"
+								>
+									<Plus class="h-4 w-4" />
+								</button>
+							</div>
+						</div>
+
+						<!-- Subtotal -->
+						<div class="mt-3 flex items-center justify-between">
+							<span class="text-sm text-neutral-600">Estimasi total:</span>
+							<span class="text-lg font-bold text-secondary">{formatPrice(subtotal)}</span>
+						</div>
+
+						<!-- Catatan -->
+						<div class="mt-4">
+							<textarea
+								bind:value={catatan}
+								rows={2}
+								placeholder="Catatan (opsional): waktu kirim, alamat, dll..."
+								class="w-full resize-none rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+							></textarea>
+						</div>
+
+						<!-- Submit -->
+						<a
+							href={buildOrderLink()}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+						>
+							<Send class="h-4 w-4" />
 							Pesan via WhatsApp
-						</Button>
+						</a>
 					</div>
 				</div>
 			</div>

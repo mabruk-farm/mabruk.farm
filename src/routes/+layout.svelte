@@ -5,12 +5,15 @@
 	import Footer from '$lib/components/layout/Footer.svelte'
 	import FloatingActions from '$lib/components/layout/FloatingActions.svelte'
 	import { setChatState } from '$lib/stores/chat.svelte'
+	import { setOrderState } from '$lib/stores/order.svelte'
 
 	let { children } = $props()
 
 	const gaId = env.PUBLIC_GA_MEASUREMENT_ID ?? ''
+	const enableAiChat = env.PUBLIC_ENABLE_AI_CHAT === 'true'
 
 	setChatState()
+	setOrderState()
 </script>
 
 <svelte:head>
@@ -27,4 +30,4 @@
 	{@render children()}
 </main>
 <Footer />
-<FloatingActions />
+<FloatingActions {enableAiChat} />

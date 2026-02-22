@@ -21,7 +21,9 @@ export const GET: RequestHandler = async () => {
 		{ loc: '/tentang', lastmod: today, changefreq: 'monthly', priority: '0.7' },
 		{ loc: '/kontak', lastmod: today, changefreq: 'monthly', priority: '0.7' },
 		{ loc: '/blog', lastmod: today, changefreq: 'weekly', priority: '0.7' },
-		{ loc: '/eduwisata', lastmod: today, changefreq: 'monthly', priority: '0.5' }
+		{ loc: '/eduwisata', lastmod: today, changefreq: 'monthly', priority: '0.5' },
+		{ loc: '/privasi', lastmod: today, changefreq: 'yearly', priority: '0.3' },
+		{ loc: '/syarat-ketentuan', lastmod: today, changefreq: 'yearly', priority: '0.3' }
 	]
 
 	const productPages: SitemapEntry[] = allProducts.map((p) => ({
