@@ -1,19 +1,21 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import FormInput from '$lib/components/ui/FormInput.svelte'
+	import FormTextarea from '$lib/components/ui/FormTextarea.svelte'
+	import FormSelect from '$lib/components/ui/FormSelect.svelte'
+	import { createWhatsAppLink, buildKerjasamaMessage } from '$lib/utils/whatsapp'
 	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 
 	let nama = $state('')
 	let company = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
 	let jabatan = $state('')
-	let whatsapp = $state('')
-	let email = $state('')
 	let jenisBisnis = $state('')
 	let estimasiKebutuhan = $state('')
 	let pesan = $state('')
 
-	let isSubmitting = $state(false)
-	let submitStatus = $state<'idle' | 'success' | 'error'>('idle')
+	let submitStatus = $state<'idle' | 'success'>('idle')
 
 	const jenisBisnisOptions = [
 		'Restoran',
@@ -24,173 +26,118 @@
 		'Lainnya'
 	]
 
-	async function handleSubmit(e: SubmitEvent) {
+	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
-		if (!nama || !pesan) return
+		if (!nama.trim() || !noWa.trim() || !pesan.trim()) return
 
-		isSubmitting = true
-		submitStatus = 'idle'
+		const message = buildKerjasamaMessage({
+			nama,
+			noWa,
+			alamat,
+			company,
+			jabatan,
+			jenisBisnis,
+			estimasiKebutuhan,
+			pesan
+		})
+		const waLink = createWhatsAppLink(message)
 
-		try {
-			const res = await fetch('/api/contact', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					type: 'kerjasama',
-					nama,
-					company,
-					jabatan,
-					whatsapp,
-					email,
-					jenisBisnis,
-					estimasiKebutuhan,
-					pesan
-				})
-			})
+		trackFormSubmit('kerjasama')
+		trackWhatsAppClick('kerjasama_form')
+		window.open(waLink, '_blank', 'noopener,noreferrer')
 
-			if (res.ok) {
-				trackFormSubmit('kerjasama')
-				submitStatus = 'success'
-				const waLink = createWhatsAppLink(
-					`Halo Mabruk Farm, saya ${nama} dari ${company || '-'}. Saya baru saja mengisi form kerjasama di website. Bisa info lebih lanjut?`
-				)
-				trackWhatsAppClick('kerjasama_form')
-				window.open(waLink, '_blank')
-			} else {
-				submitStatus = 'error'
-			}
-		} catch {
-			submitStatus = 'error'
-		} finally {
-			isSubmitting = false
-		}
+		submitStatus = 'success'
+		nama = ''
+		company = ''
+		noWa = ''
+		alamat = ''
+		jabatan = ''
+		jenisBisnis = ''
+		estimasiKebutuhan = ''
+		pesan = ''
 	}
-
-	const inputClass =
-		'w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
 </script>
 
 {#if submitStatus === 'success'}
 	<div class="rounded-xl bg-primary-surface p-8 text-center">
 		<p class="text-lg font-bold text-primary">Terima kasih!</p>
 		<p class="mt-2 text-sm text-neutral-600">
-			Form kerjasama Anda sudah terkirim. Tim kami akan menghubungi Anda segera via WhatsApp.
+			WhatsApp sudah terbuka. Silakan kirim pesan untuk melanjutkan diskusi kerjasama dengan tim
+			kami.
 		</p>
+		<button
+			onclick={() => (submitStatus = 'idle')}
+			class="mt-4 text-sm font-medium text-primary underline underline-offset-2 hover:text-primary-light"
+		>
+			Ajukan lagi
+		</button>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="space-y-5">
 		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-			<div>
-				<label for="nama" class="mb-1.5 block text-sm font-medium text-neutral-700"
-					>Nama Lengkap *</label
-				>
-				<input
-					id="nama"
-					type="text"
-					bind:value={nama}
-					required
-					class={inputClass}
-					placeholder="Nama Anda"
-				/>
-			</div>
-			<div>
-				<label for="company" class="mb-1.5 block text-sm font-medium text-neutral-700"
-					>Nama Perusahaan</label
-				>
-				<input
-					id="company"
-					type="text"
-					bind:value={company}
-					class={inputClass}
-					placeholder="PT / CV / Nama Usaha"
-				/>
-			</div>
-		</div>
-
-		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-			<div>
-				<label for="jabatan" class="mb-1.5 block text-sm font-medium text-neutral-700"
-					>Jabatan</label
-				>
-				<input
-					id="jabatan"
-					type="text"
-					bind:value={jabatan}
-					class={inputClass}
-					placeholder="Purchasing Manager, Owner, dll"
-				/>
-			</div>
-			<div>
-				<label for="jenisBisnis" class="mb-1.5 block text-sm font-medium text-neutral-700"
-					>Jenis Bisnis</label
-				>
-				<select id="jenisBisnis" bind:value={jenisBisnis} class={inputClass}>
-					<option value="">Pilih jenis bisnis</option>
-					{#each jenisBisnisOptions as opt}
-						<option value={opt}>{opt}</option>
-					{/each}
-				</select>
-			</div>
-		</div>
-
-		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-			<div>
-				<label for="whatsapp" class="mb-1.5 block text-sm font-medium text-neutral-700"
-					>No. WhatsApp</label
-				>
-				<input
-					id="whatsapp"
-					type="tel"
-					bind:value={whatsapp}
-					class={inputClass}
-					placeholder="08xx-xxxx-xxxx"
-				/>
-			</div>
-			<div>
-				<label for="email" class="mb-1.5 block text-sm font-medium text-neutral-700">Email</label>
-				<input
-					id="email"
-					type="email"
-					bind:value={email}
-					class={inputClass}
-					placeholder="email@perusahaan.com"
-				/>
-			</div>
-		</div>
-
-		<div>
-			<label for="estimasiKebutuhan" class="mb-1.5 block text-sm font-medium text-neutral-700"
-				>Estimasi Kebutuhan / Minggu (kg)</label
-			>
-			<input
-				id="estimasiKebutuhan"
-				type="text"
-				bind:value={estimasiKebutuhan}
-				class={inputClass}
-				placeholder="Contoh: 50 kg"
+			<FormInput
+				id="inquiry-nama"
+				label="Nama Lengkap"
+				bind:value={nama}
+				required
+				placeholder="Nama Anda"
+			/>
+			<FormInput
+				id="inquiry-company"
+				label="Nama Perusahaan"
+				bind:value={company}
+				placeholder="PT / CV / Nama Usaha"
 			/>
 		</div>
 
-		<div>
-			<label for="pesan" class="mb-1.5 block text-sm font-medium text-neutral-700"
-				>Pesan / Kebutuhan Khusus *</label
-			>
-			<textarea
-				id="pesan"
-				bind:value={pesan}
+		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+			<FormInput
+				id="inquiry-wa"
+				label="No. WhatsApp"
+				bind:value={noWa}
+				type="tel"
 				required
-				rows={4}
-				class={inputClass}
-				placeholder="Ceritakan kebutuhan sayuran untuk bisnis Anda..."
-			></textarea>
+				placeholder="08xx-xxxx-xxxx"
+			/>
+			<FormInput
+				id="inquiry-alamat"
+				label="Alamat"
+				bind:value={alamat}
+				placeholder="Kota atau alamat lengkap"
+			/>
 		</div>
 
-		{#if submitStatus === 'error'}
-			<p class="text-sm text-red-600">Terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.</p>
-		{/if}
+		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+			<FormInput
+				id="inquiry-jabatan"
+				label="Jabatan"
+				bind:value={jabatan}
+				placeholder="Purchasing Manager, Owner, dll"
+			/>
+			<FormSelect
+				id="inquiry-bisnis"
+				label="Jenis Bisnis"
+				bind:value={jenisBisnis}
+				options={jenisBisnisOptions}
+				placeholder="Pilih jenis bisnis"
+			/>
+		</div>
 
-		<Button type="submit" variant="primary" disabled={isSubmitting} class="w-full py-3">
-			{isSubmitting ? 'Mengirim...' : 'Ajukan Kerjasama'}
-		</Button>
+		<FormInput
+			id="inquiry-estimasi"
+			label="Estimasi Kebutuhan / Minggu (kg)"
+			bind:value={estimasiKebutuhan}
+			placeholder="Contoh: 50 kg"
+		/>
+
+		<FormTextarea
+			id="inquiry-pesan"
+			label="Pesan / Kebutuhan Khusus"
+			bind:value={pesan}
+			required
+			placeholder="Ceritakan kebutuhan sayuran untuk bisnis Anda..."
+		/>
+
+		<Button type="submit" variant="whatsapp" class="w-full py-3">Ajukan via WhatsApp</Button>
 	</form>
 {/if}

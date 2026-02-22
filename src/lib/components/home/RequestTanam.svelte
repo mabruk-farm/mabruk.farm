@@ -1,22 +1,35 @@
 <script lang="ts">
 	import { Sprout } from 'lucide-svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import FormInput from '$lib/components/ui/FormInput.svelte'
+	import FormTextarea from '$lib/components/ui/FormTextarea.svelte'
+	import { createWhatsAppLink, buildRequestTanamMessage } from '$lib/utils/whatsapp'
+	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 	import { fadeInOnScroll } from '$lib/utils/animate'
 
 	let jenisSayur = $state('')
 	let nama = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
 	let estimasi = $state('')
-	let whatsapp = $state('')
+	let pesan = $state('')
 
 	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
-		const parts = [`Halo Mabruk Farm, saya ingin request tanam sayuran.`]
-		parts.push(`Jenis sayur: ${jenisSayur}`)
-		parts.push(`Nama: ${nama}`)
-		if (estimasi) parts.push(`Estimasi kebutuhan/minggu: ${estimasi}`)
-		if (whatsapp) parts.push(`No. WA saya: ${whatsapp}`)
-		const link = createWhatsAppLink(parts.join('\n'))
+		if (!jenisSayur.trim() || !nama.trim()) return
+
+		const message = buildRequestTanamMessage({
+			nama,
+			noWa,
+			alamat,
+			pesan,
+			jenisSayur,
+			estimasi
+		})
+		const link = createWhatsAppLink(message)
+
+		trackFormSubmit('request_tanam')
+		trackWhatsAppClick('request_tanam_form')
 		window.open(link, '_blank', 'noopener,noreferrer')
 	}
 </script>
@@ -36,65 +49,53 @@
 				</div>
 
 				<form onsubmit={handleSubmit} class="space-y-4 px-6 py-6 sm:px-8">
-					<div>
-						<label for="rt-jenis" class="mb-1 block text-sm font-medium text-neutral-900">
-							Jenis Sayur yang Diinginkan <span class="text-error">*</span>
-						</label>
-						<input
-							id="rt-jenis"
-							type="text"
-							bind:value={jenisSayur}
-							required
-							placeholder="Contoh: Kangkung, Bayam Merah, Rocket..."
-							class="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-						/>
-					</div>
+					<FormInput
+						id="rt-jenis"
+						label="Jenis Sayur yang Diinginkan"
+						bind:value={jenisSayur}
+						required
+						placeholder="Contoh: Kangkung, Bayam Merah, Rocket..."
+					/>
 
-					<div>
-						<label for="rt-nama" class="mb-1 block text-sm font-medium text-neutral-900">
-							Nama Anda <span class="text-error">*</span>
-						</label>
-						<input
-							id="rt-nama"
-							type="text"
-							bind:value={nama}
-							required
-							placeholder="Nama lengkap"
-							class="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-						/>
-					</div>
+					<FormInput
+						id="rt-nama"
+						label="Nama"
+						bind:value={nama}
+						required
+						placeholder="Nama lengkap"
+					/>
 
-					<div>
-						<label for="rt-estimasi" class="mb-1 block text-sm font-medium text-neutral-900">
-							Estimasi Kebutuhan / Minggu
-						</label>
-						<input
-							id="rt-estimasi"
-							type="text"
-							bind:value={estimasi}
-							placeholder="Contoh: 5 kg/minggu"
-							class="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-						/>
-					</div>
+					<FormInput
+						id="rt-wa"
+						label="No. WhatsApp"
+						bind:value={noWa}
+						type="tel"
+						placeholder="08xx-xxxx-xxxx"
+					/>
 
-					<div>
-						<label for="rt-wa" class="mb-1 block text-sm font-medium text-neutral-900">
-							No. WhatsApp
-						</label>
-						<input
-							id="rt-wa"
-							type="tel"
-							bind:value={whatsapp}
-							placeholder="08xx-xxxx-xxxx"
-							class="w-full rounded-lg border border-neutral-300 px-3 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-						/>
-					</div>
+					<FormInput
+						id="rt-alamat"
+						label="Alamat"
+						bind:value={alamat}
+						placeholder="Kota atau alamat lengkap"
+					/>
 
-					<Button
-						type="submit"
-						variant="whatsapp"
-						class="w-full justify-center py-3 text-sm"
-					>
+					<FormInput
+						id="rt-estimasi"
+						label="Estimasi Kebutuhan / Minggu"
+						bind:value={estimasi}
+						placeholder="Contoh: 5 kg/minggu"
+					/>
+
+					<FormTextarea
+						id="rt-pesan"
+						label="Pesan"
+						bind:value={pesan}
+						rows={3}
+						placeholder="Ada catatan tambahan?"
+					/>
+
+					<Button type="submit" variant="whatsapp" class="w-full justify-center py-3 text-sm">
 						Kirim Request via WhatsApp
 					</Button>
 				</form>
