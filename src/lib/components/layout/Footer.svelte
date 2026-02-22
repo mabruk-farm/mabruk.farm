@@ -7,17 +7,26 @@
 
 	const menuLinks = [
 		{ href: '/produk', label: 'Produk' },
+		{ href: '/langganan', label: 'Langganan' },
 		{ href: '/tentang', label: 'Tentang Kami' },
 		{ href: '/kerjasama', label: 'Kerjasama' },
+		{ href: '/eduwisata', label: 'Eduwisata' },
 		{ href: '/blog', label: 'Blog' },
 		{ href: '/kontak', label: 'Kontak' }
+	]
+
+	const bantuanLinks = [
+		{ href: '/cara-pesan', label: 'Cara Pesan' },
+		{ href: '/area-pengiriman', label: 'Area Pengiriman' },
+		{ href: '/faq', label: 'FAQ' },
+		{ href: '/galeri', label: 'Galeri' }
 	]
 </script>
 
 <footer class="bg-neutral-900 text-white">
 	<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-		<div class="grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12">
-			<div>
+		<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+			<div class="sm:col-span-2 lg:col-span-1">
 				<a href="/" class="mb-4 inline-block">
 					<span class="text-xl font-extrabold text-white"
 						>mabruk<span class="text-primary-light">.farm</span></span
@@ -36,6 +45,20 @@
 				<h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Menu</h3>
 				<nav class="flex flex-col gap-2">
 					{#each menuLinks as link (link.href)}
+						<a
+							href={link.href}
+							class="text-sm text-neutral-400 transition-colors hover:text-primary-light"
+						>
+							{link.label}
+						</a>
+					{/each}
+				</nav>
+			</div>
+
+			<div>
+				<h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Bantuan</h3>
+				<nav class="flex flex-col gap-2">
+					{#each bantuanLinks as link (link.href)}
 						<a
 							href={link.href}
 							class="text-sm text-neutral-400 transition-colors hover:text-primary-light"
