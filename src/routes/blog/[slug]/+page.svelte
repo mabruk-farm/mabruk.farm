@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Badge from '$lib/components/ui/Badge.svelte'
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import BlogCard from '$lib/components/ui/BlogCard.svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
@@ -45,6 +46,13 @@
 	<article>
 		<!-- Cover image -->
 		<div class="mx-auto max-w-5xl px-4 pt-8 sm:px-6 lg:px-8">
+			<Breadcrumb
+				items={[
+					{ label: 'Beranda', href: '/' },
+					{ label: 'Blog', href: '/blog' },
+					{ label: post.title }
+				]}
+			/>
 			<div class="relative aspect-video overflow-hidden rounded-2xl bg-primary-surface">
 				{#if post.coverImageUrl}
 					<img

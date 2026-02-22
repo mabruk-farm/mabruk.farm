@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Badge from '$lib/components/ui/Badge.svelte'
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ProductCard from '$lib/components/ui/ProductCard.svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
@@ -109,6 +110,13 @@
 {#if product}
 	<section class="py-10 sm:py-16">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<Breadcrumb
+				items={[
+					{ label: 'Beranda', href: '/' },
+					{ label: 'Produk', href: '/produk' },
+					{ label: product.name }
+				]}
+			/>
 			<div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
 				<!-- Product image -->
 				<div class="relative aspect-square overflow-hidden rounded-2xl bg-primary-surface">
