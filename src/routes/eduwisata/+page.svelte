@@ -6,11 +6,20 @@
 		Users,
 		Clock,
 		MapPin,
-		CheckCircle
+		CheckCircle,
+		Send
 	} from 'lucide-svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import FormInput from '$lib/components/ui/FormInput.svelte'
+	import FormTextarea from '$lib/components/ui/FormTextarea.svelte'
+	import FormSelect from '$lib/components/ui/FormSelect.svelte'
+	import {
+		createWhatsAppLink,
+		buildEduwisataMessage,
+		type EduwisataFormData
+	} from '$lib/utils/whatsapp'
+	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 	import { createBreadcrumbJsonLd } from '$lib/utils/seo'
 
 	const breadcrumbJsonLd = JSON.stringify(
@@ -20,9 +29,41 @@
 		])
 	)
 
-	const waLink = createWhatsAppLink(
-		'Halo Mabruk Farm, saya tertarik dengan program eduwisata hidroponik. Bisa info jadwal dan biaya?'
-	)
+	// Form state
+	let paketEduwisata = $state('')
+	let jumlahPeserta = $state('')
+	let tanggalKunjungan = $state('')
+	let nama = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
+	let pesan = $state('')
+	let submitted = $state(false)
+
+	const paketEduwisataOptions = ['Paket Pelajar', 'Paket Komunitas', 'Paket Keluarga']
+
+	function selectPaketEduwisata(name: string) {
+		paketEduwisata = name
+		document.getElementById('form-eduwisata')?.scrollIntoView({ behavior: 'smooth' })
+	}
+
+	function handleSubmit(e: SubmitEvent) {
+		e.preventDefault()
+		const data: EduwisataFormData = {
+			paket: paketEduwisata,
+			jumlahPeserta,
+			tanggalKunjungan,
+			nama,
+			noWa,
+			alamat,
+			pesan
+		}
+		const message = buildEduwisataMessage(data)
+		const link = createWhatsAppLink(message)
+		trackFormSubmit('eduwisata')
+		trackWhatsAppClick('eduwisata_form')
+		window.open(link, '_blank')
+		submitted = true
+	}
 
 	const activities = [
 		{
@@ -152,7 +193,7 @@
 			langsung tentang pertanian hidroponik modern sambil menikmati suasana hijau Gunung Sari.
 		</p>
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
-			<Button variant="amber" href={waLink} class="px-6 py-3">
+			<Button variant="amber" href="#form-eduwisata" class="px-6 py-3">
 				Reservasi Kunjungan
 			</Button>
 			<Button variant="outline-light" href="#paket" class="px-6 py-3">
@@ -285,11 +326,11 @@
 					</ul>
 					<div class="mt-6">
 						{#if pkg.highlighted}
-							<Button variant="amber" href={waLink} class="w-full py-2.5">
+							<Button variant="amber" onclick={() => selectPaketEduwisata(pkg.name)} class="w-full py-2.5">
 								Reservasi Sekarang
 							</Button>
 						{:else}
-							<Button variant="secondary" href={waLink} class="w-full py-2.5">
+							<Button variant="secondary" onclick={() => selectPaketEduwisata(pkg.name)} class="w-full py-2.5">
 								Hubungi Kami
 							</Button>
 						{/if}
@@ -350,20 +391,76 @@
 	</div>
 </section>
 
-<!-- 7. CTA -->
-<section class="bg-primary py-14 sm:py-16">
-	<div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-		<h2 class="text-2xl font-bold text-white md:text-3xl">
-			Siap Berkunjung ke Mabruk Farm?
-		</h2>
-		<p class="mx-auto mt-4 max-w-xl text-base text-white/80">
-			Hubungi kami untuk jadwalkan kunjungan. Kami siap menyambut Anda di greenhouse Gunung
-			Sari!
-		</p>
-		<div class="mt-8">
-			<Button variant="amber" href={waLink} class="px-8 py-3">
-				Reservasi via WhatsApp
-			</Button>
-		</div>
+<!-- 7. Form Reservasi -->
+<section id="form-eduwisata" class="bg-primary-surface py-14 sm:py-16">
+	<div class="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
+		<SectionHeading
+			title="Reservasi Kunjungan"
+			subtitle="Isi data berikut dan tim kami akan menghubungi Anda via WhatsApp untuk konfirmasi."
+		/>
+		{#if submitted}
+			<div class="rounded-2xl bg-white p-8 text-center shadow-sm">
+				<CheckCircle class="mx-auto h-12 w-12 text-primary" />
+				<h3 class="mt-4 text-lg font-bold text-neutral-900">Reservasi Terkirim!</h3>
+				<p class="mt-2 text-sm text-neutral-600">
+					WhatsApp sudah terbuka dengan data reservasi Anda. Tinggal kirim pesan dan tim kami
+					akan mengonfirmasi jadwal kunjungan.
+				</p>
+				<Button variant="primary" onclick={() => (submitted = false)} class="mt-6 px-6 py-2.5">
+					Kirim Lagi
+				</Button>
+			</div>
+		{:else}
+			<form onsubmit={handleSubmit} class="space-y-4 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+				<FormSelect
+					id="paketEduwisata"
+					label="Paket Kunjungan"
+					bind:value={paketEduwisata}
+					options={paketEduwisataOptions}
+					placeholder="Pilih paket"
+					required
+				/>
+				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<FormInput
+						id="jumlahPeserta"
+						label="Jumlah Peserta"
+						bind:value={jumlahPeserta}
+						placeholder="Contoh: 25 orang"
+						required
+					/>
+					<FormInput
+						id="tanggalKunjungan"
+						label="Tanggal Kunjungan"
+						bind:value={tanggalKunjungan}
+						placeholder="Contoh: 15 Maret 2026"
+						required
+					/>
+				</div>
+				<FormInput id="nama" label="Nama PIC" bind:value={nama} placeholder="Nama penanggung jawab" required />
+				<FormInput
+					id="noWa"
+					label="No. WhatsApp"
+					bind:value={noWa}
+					type="tel"
+					placeholder="08xxxxxxxxxx"
+					required
+				/>
+				<FormInput id="alamat" label="Asal Instansi / Kota" bind:value={alamat} placeholder="Contoh: SMA Negeri 1 Bandar Lampung" />
+				<FormTextarea
+					id="pesan"
+					label="Pesan / Catatan"
+					bind:value={pesan}
+					placeholder="Misal: kebutuhan khusus, pertanyaan, dll."
+					rows={3}
+				/>
+				<button
+					type="submit"
+					class="flex w-full items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+				>
+					<Send class="h-4 w-4" />
+					Reservasi via WhatsApp
+				</button>
+			</form>
+		{/if}
 	</div>
 </section>

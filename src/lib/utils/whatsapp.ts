@@ -102,3 +102,88 @@ export function buildOrderMessage(data: BaseFormData): string {
 	}
 	return lines.join('\n')
 }
+
+// --- Additional Form Types ---
+
+export interface LanggananFormData extends BaseFormData {
+	paket: string
+}
+
+export interface EduwisataFormData extends BaseFormData {
+	paket: string
+	jumlahPeserta: string
+	tanggalKunjungan: string
+}
+
+export interface ProductOrderFormData {
+	nama: string
+	noWa: string
+	alamat: string
+	productName: string
+	qty: number
+	unit: string
+	estimasiHarga: string
+	catatan: string
+}
+
+// --- Additional Message Builders ---
+
+export function buildLanggananMessage(data: LanggananFormData): string {
+	const lines: string[] = ['*Form Langganan — mabruk.farm*', '']
+	addLine(lines, 'Paket', data.paket)
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildEduwisataMessage(data: EduwisataFormData): string {
+	const lines: string[] = ['*Reservasi Eduwisata — mabruk.farm*', '']
+	addLine(lines, 'Paket', data.paket)
+	addLine(lines, 'Jumlah Peserta', data.jumlahPeserta)
+	addLine(lines, 'Tanggal Kunjungan', data.tanggalKunjungan)
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildProductOrderMessage(data: ProductOrderFormData): string {
+	const lines: string[] = ['*Pesan Produk — mabruk.farm*', '']
+	addLine(lines, 'Produk', data.productName)
+	lines.push(`Jumlah: ${data.qty} ${data.unit}`)
+	addLine(lines, 'Estimasi', data.estimasiHarga)
+	lines.push('')
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.catatan.trim()) {
+		lines.push('')
+		lines.push('Catatan:')
+		lines.push(data.catatan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildPageMessage(source: string, data: BaseFormData): string {
+	const lines: string[] = [`*${source} — mabruk.farm*`, '']
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}

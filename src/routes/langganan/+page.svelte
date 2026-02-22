@@ -8,12 +8,21 @@
 		Leaf,
 		Heart,
 		CheckCircle,
-		MessageCircle
+		MessageCircle,
+		Send
 	} from 'lucide-svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Accordion from '$lib/components/ui/Accordion.svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import FormInput from '$lib/components/ui/FormInput.svelte'
+	import FormTextarea from '$lib/components/ui/FormTextarea.svelte'
+	import FormSelect from '$lib/components/ui/FormSelect.svelte'
+	import {
+		createWhatsAppLink,
+		buildLanggananMessage,
+		type LanggananFormData
+	} from '$lib/utils/whatsapp'
+	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 	import { createBreadcrumbJsonLd } from '$lib/utils/seo'
 
 	const breadcrumbJsonLd = JSON.stringify(
@@ -23,15 +32,31 @@
 		])
 	)
 
-	function waLangganan(paket: string) {
-		return createWhatsAppLink(
-			`Halo Mabruk Farm! Saya tertarik dengan ${paket}. Bisa info lebih lanjut tentang paket langganan mingguan?`
-		)
+	// Form state
+	let paket = $state('')
+	let nama = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
+	let pesan = $state('')
+	let submitted = $state(false)
+
+	const paketOptions = ['Paket Hemat', 'Paket Keluarga', 'Paket Premium', 'Paket Custom']
+
+	function selectPaket(name: string) {
+		paket = name
+		document.getElementById('form-langganan')?.scrollIntoView({ behavior: 'smooth' })
 	}
 
-	const waCustom = createWhatsAppLink(
-		'Halo Mabruk Farm! Saya mau tanya tentang paket langganan custom. Bisa disesuaikan dengan kebutuhan saya?'
-	)
+	function handleSubmit(e: SubmitEvent) {
+		e.preventDefault()
+		const data: LanggananFormData = { paket, nama, noWa, alamat, pesan }
+		const message = buildLanggananMessage(data)
+		const link = createWhatsAppLink(message)
+		trackFormSubmit('langganan')
+		trackWhatsAppClick('langganan_form')
+		window.open(link, '_blank')
+		submitted = true
+	}
 
 	const steps = [
 		{
@@ -288,11 +313,11 @@
 					</ul>
 					<div class="mt-6">
 						{#if pkg.highlighted}
-							<Button variant="amber" href={waLangganan(pkg.name)} class="w-full py-2.5">
+							<Button variant="amber" onclick={() => selectPaket(pkg.name)} class="w-full py-2.5">
 								Mulai Langganan
 							</Button>
 						{:else}
-							<Button variant="secondary" href={waLangganan(pkg.name)} class="w-full py-2.5">
+							<Button variant="secondary" onclick={() => selectPaket(pkg.name)} class="w-full py-2.5">
 								Pilih Paket
 							</Button>
 						{/if}
@@ -309,7 +334,7 @@
 				Butuh paket khusus? Kami bisa menyesuaikan isi dan jumlah sesuai kebutuhan Anda.
 			</p>
 			<div class="mt-4">
-				<Button variant="primary" href={waCustom} class="px-6 py-2.5">
+				<Button variant="primary" onclick={() => selectPaket('Paket Custom')} class="px-6 py-2.5">
 					Hubungi Kami
 				</Button>
 			</div>
@@ -350,20 +375,60 @@
 	</div>
 </section>
 
-<!-- 6. CTA -->
-<section class="bg-primary py-14 sm:py-16">
-	<div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-		<h2 class="text-2xl font-bold text-white md:text-3xl">
-			Siap Menikmati Sayuran Segar Setiap Minggu?
-		</h2>
-		<p class="mx-auto mt-4 max-w-xl text-base text-white/80">
-			Mulai langganan hari ini. Tanpa kontrak, tanpa ribet — cukup pilih paket dan kami yang
-			urus sisanya.
-		</p>
-		<div class="mt-8 flex flex-wrap justify-center gap-4">
-			<Button variant="amber" href={waLangganan('Paket Langganan')} class="px-8 py-3">
-				Mulai Langganan via WhatsApp
-			</Button>
-		</div>
+<!-- 6. Form Langganan -->
+<section id="form-langganan" class="bg-primary-surface py-14 sm:py-16">
+	<div class="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
+		<SectionHeading
+			title="Mulai Langganan"
+			subtitle="Isi data Anda dan pilih paket. Tim kami akan menghubungi via WhatsApp."
+		/>
+		{#if submitted}
+			<div class="rounded-2xl bg-white p-8 text-center shadow-sm">
+				<CheckCircle class="mx-auto h-12 w-12 text-primary" />
+				<h3 class="mt-4 text-lg font-bold text-neutral-900">Formulir Terkirim!</h3>
+				<p class="mt-2 text-sm text-neutral-600">
+					WhatsApp sudah terbuka dengan data Anda. Tinggal kirim pesan dan tim kami akan
+					memproses langganan Anda.
+				</p>
+				<Button variant="primary" onclick={() => (submitted = false)} class="mt-6 px-6 py-2.5">
+					Kirim Lagi
+				</Button>
+			</div>
+		{:else}
+			<form onsubmit={handleSubmit} class="space-y-4 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+				<FormSelect
+					id="paket"
+					label="Paket Langganan"
+					bind:value={paket}
+					options={paketOptions}
+					placeholder="Pilih paket"
+					required
+				/>
+				<FormInput id="nama" label="Nama" bind:value={nama} placeholder="Nama lengkap" required />
+				<FormInput
+					id="noWa"
+					label="No. WhatsApp"
+					bind:value={noWa}
+					type="tel"
+					placeholder="08xxxxxxxxxx"
+					required
+				/>
+				<FormInput id="alamat" label="Alamat" bind:value={alamat} placeholder="Alamat pengiriman" />
+				<FormTextarea
+					id="pesan"
+					label="Pesan / Catatan"
+					bind:value={pesan}
+					placeholder="Misal: hari pengiriman yang diinginkan, request jenis sayuran, dll."
+					rows={3}
+				/>
+				<button
+					type="submit"
+					class="flex w-full items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+				>
+					<Send class="h-4 w-4" />
+					Daftar Langganan via WhatsApp
+				</button>
+			</form>
+		{/if}
 	</div>
 </section>
