@@ -94,3 +94,178 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
 	address,
 	operatingHours
 }`
+
+// --- FAQ ---
+
+export const allFaqsQuery = `*[_type == "faq"] | order(category asc, sortOrder asc) {
+	_id,
+	question,
+	answer,
+	category
+}`
+
+export const faqsByCategoryQuery = `*[_type == "faq" && category == $category] | order(sortOrder asc) {
+	_id,
+	question,
+	answer,
+	category
+}`
+
+// --- Gallery ---
+
+export const allGalleryPhotosQuery = `*[_type == "galleryPhoto"] | order(sortOrder asc) {
+	_id,
+	image,
+	alt,
+	category
+}`
+
+// --- About Page ---
+
+export const aboutPageQuery = `*[_type == "aboutPage"][0] {
+	heroTitle,
+	heroSubtitle,
+	namaMeaning,
+	nameMeaningSubtext,
+	storyParagraphs,
+	storyImage,
+	team[] {
+		name,
+		description,
+		image
+	},
+	processSteps[] {
+		title,
+		description,
+		icon
+	},
+	values[] {
+		title,
+		description,
+		icon
+	}
+}`
+
+// --- Langganan Page ---
+
+export const langgananPageQuery = `*[_type == "langgananPage"][0] {
+	heroTitle,
+	heroSubtitle,
+	steps[] {
+		title,
+		description,
+		icon
+	},
+	packages[] {
+		name,
+		price,
+		period,
+		weight,
+		target,
+		includes,
+		highlighted
+	},
+	benefits[] {
+		title,
+		description,
+		icon
+	}
+}`
+
+// --- Eduwisata Page ---
+
+export const eduwisataPageQuery = `*[_type == "eduwisataPage"][0] {
+	heroTitle,
+	heroSubtitle,
+	activities[] {
+		title,
+		description,
+		icon
+	},
+	photos[] {
+		"imageUrl": image.asset->url,
+		alt
+	},
+	packages[] {
+		name,
+		duration,
+		target,
+		capacity,
+		includes,
+		highlighted
+	},
+	practicalInfo[] {
+		title,
+		description,
+		icon
+	}
+}`
+
+// --- Kerjasama Page ---
+
+export const kerjasamaPageQuery = `*[_type == "kerjasamaPage"][0] {
+	heroTitle,
+	heroSubtitle,
+	benefits[] {
+		title,
+		description,
+		icon
+	},
+	tiers[] {
+		name,
+		volume,
+		discount,
+		target,
+		highlighted
+	},
+	pricingProducts[] {
+		name,
+		retail,
+		starter,
+		business,
+		enterprise
+	},
+	extras
+}`
+
+// --- Cara Pesan Page ---
+
+export const caraPesanPageQuery = `*[_type == "caraPesanPage"][0] {
+	heroTitle,
+	heroSubtitle,
+	steps[] {
+		title,
+		description,
+		icon
+	},
+	infoCards[] {
+		title,
+		description,
+		highlight,
+		icon
+	},
+	tips[] {
+		text,
+		icon
+	}
+}`
+
+// --- Area Pengiriman Page ---
+
+export const areaPengirimanPageQuery = `*[_type == "areaPengirimanPage"][0] {
+	heroTitle,
+	heroSubtitle,
+	zones[] {
+		zone,
+		area,
+		ongkir,
+		estimasi,
+		colorTheme
+	},
+	deliveryInfo[] {
+		title,
+		description,
+		icon
+	},
+	mapsEmbedUrl
+}`

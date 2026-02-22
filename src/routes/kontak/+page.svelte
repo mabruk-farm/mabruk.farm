@@ -6,6 +6,8 @@
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
 	import { createLocalBusinessJsonLd, createBreadcrumbJsonLd } from '$lib/utils/seo'
 
+	let { data } = $props()
+
 	const localBusinessJsonLd = JSON.stringify(createLocalBusinessJsonLd())
 	const breadcrumbJsonLd = JSON.stringify(
 		createBreadcrumbJsonLd([
@@ -131,28 +133,10 @@
 	<div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
 		<SectionHeading title="Pertanyaan Umum" />
 		<Accordion
-			items={[
-				{
-					question: 'Bagaimana cara memesan sayuran dari Mabruk Farm?',
-					answer: 'Anda bisa memesan langsung via WhatsApp di 0852-6945-8526. Kirim pesanan sebelum jam 10 pagi, dan sayuran akan dikirim di hari yang sama.'
-				},
-				{
-					question: 'Berapa minimal order?',
-					answer: 'Tidak ada minimal order untuk pembelian satuan. Untuk kerjasama B2B (restoran, hotel, dll), minimal order mulai dari 5 kg/minggu.'
-				},
-				{
-					question: 'Area pengiriman mencakup mana saja?',
-					answer: 'Saat ini kami melayani pengiriman ke seluruh area Bandar Lampung dan sekitarnya. Untuk area di luar Bandar Lampung, silakan hubungi kami untuk informasi lebih lanjut.'
-				},
-				{
-					question: 'Metode pembayaran apa saja yang diterima?',
-					answer: 'Kami menerima transfer bank (BCA, BRI, Mandiri), QRIS, dan pembayaran tunai saat pengiriman (COD) untuk area tertentu.'
-				},
-				{
-					question: 'Apakah sayuran Mabruk Farm benar-benar tanpa pestisida?',
-					answer: 'Ya, 100% tanpa pestisida kimia. Kami menggunakan greenhouse tertutup dengan insect net dan pengendalian hama organik (neem oil). Semua sayuran ditanam dengan sistem hidroponik di lingkungan terkontrol.'
-				}
-			]}
+			items={data.faqs.map((f: { question: string; answer: string }) => ({
+				question: f.question,
+				answer: f.answer
+			}))}
 		/>
 	</div>
 </section>
