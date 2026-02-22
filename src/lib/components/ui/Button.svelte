@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		variant?: 'primary' | 'whatsapp' | 'secondary' | 'ghost' | 'amber'
+		variant?: 'primary' | 'whatsapp' | 'secondary' | 'ghost' | 'amber' | 'outline-light'
 		href?: string
 		type?: 'button' | 'submit' | 'reset'
 		disabled?: boolean
@@ -26,7 +26,8 @@
 		whatsapp: 'bg-whatsapp text-white hover:opacity-90',
 		secondary: 'bg-white text-primary border border-primary hover:bg-primary-surface',
 		ghost: 'bg-transparent text-primary hover:bg-primary-surface',
-		amber: 'bg-secondary text-white hover:opacity-90'
+		amber: 'bg-secondary text-white hover:opacity-90',
+		'outline-light': 'bg-transparent text-white border border-white/30 hover:bg-white/10'
 	}
 
 	const classes = $derived(

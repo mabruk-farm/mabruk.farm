@@ -39,7 +39,7 @@
 					<Button variant="whatsapp" href={waLink} class="px-6 py-3 text-sm">
 						Pesan Sekarang via WhatsApp
 					</Button>
-					<Button variant="secondary" href="/produk" class="border-white/30 bg-white/10 text-white hover:bg-white/20 px-6 py-3 text-sm">
+					<Button variant="outline-light" href="/produk" class="px-6 py-3 text-sm">
 						Lihat Produk Kami
 					</Button>
 				</div>

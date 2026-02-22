@@ -127,11 +127,7 @@
 		</p>
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
 			<Button variant="amber" href="#form" class="px-6 py-3">Ajukan Kerjasama</Button>
-			<Button
-				variant="secondary"
-				href={waLink}
-				class="border-white/30 bg-transparent px-6 py-3 text-white hover:bg-white/10"
-			>
+			<Button variant="outline-light" href={waLink} class="px-6 py-3">
 				Hubungi Langsung
 			</Button>
 		</div>

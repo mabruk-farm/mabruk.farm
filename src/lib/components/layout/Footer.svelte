@@ -84,8 +84,19 @@
 			</div>
 		</div>
 
-		<div class="mt-10 border-t border-neutral-800 pt-6 text-center text-xs text-neutral-500">
-			&copy; {currentYear} PT Mabruk Agro Lestari. Hak cipta dilindungi.
+		<div
+			class="mt-10 flex flex-col items-center gap-3 border-t border-neutral-800 pt-6 text-xs text-neutral-500"
+		>
+			<div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+				<a href="/privasi" class="transition-colors hover:text-neutral-300"
+					>Kebijakan Privasi</a
+				>
+				<span class="hidden sm:inline">&bull;</span>
+				<a href="/syarat-ketentuan" class="transition-colors hover:text-neutral-300"
+					>Syarat & Ketentuan</a
+				>
+			</div>
+			<p>&copy; {currentYear} PT Mabruk Agro Lestari. Hak cipta dilindungi.</p>
 		</div>
 	</div>
 </footer>

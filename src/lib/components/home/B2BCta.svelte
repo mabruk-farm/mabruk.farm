@@ -39,11 +39,7 @@
 			<Button variant="amber" href="/kerjasama" class="px-6 py-3">
 				Ajukan Kerjasama
 			</Button>
-			<Button
-				variant="secondary"
-				href={waLink}
-				class="border-white/30 bg-transparent text-white hover:bg-white/10 px-6 py-3"
-			>
+			<Button variant="outline-light" href={waLink} class="px-6 py-3">
 				Hubungi Langsung
 			</Button>
 		</div>
