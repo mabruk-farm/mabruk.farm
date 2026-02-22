@@ -4,6 +4,7 @@
 	import { getOrderState } from '$lib/stores/order.svelte'
 	import ChatWidget from '$lib/components/chat/ChatWidget.svelte'
 	import OrderWidget from '$lib/components/order/OrderWidget.svelte'
+	import { trackOrderWidgetOpen } from '$lib/utils/analytics'
 
 	let { enableAiChat = false }: { enableAiChat?: boolean } = $props()
 
@@ -16,6 +17,7 @@
 		if (enableAiChat) {
 			chat.open()
 		} else {
+			trackOrderWidgetOpen()
 			order.open()
 		}
 	}

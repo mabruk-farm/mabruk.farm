@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
+	import { trackFormSubmit } from '$lib/utils/analytics'
 
 	let nama = $state('')
 	let wa_email = $state('')
@@ -32,6 +33,7 @@
 			})
 
 			if (res.ok) {
+				trackFormSubmit('kontak')
 				submitStatus = 'success'
 				nama = ''
 				wa_email = ''

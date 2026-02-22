@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Badge from '$lib/components/ui/Badge.svelte'
+	import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ProductCard from '$lib/components/ui/ProductCard.svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
@@ -7,6 +8,7 @@
 	import { formatPrice, formatPriceWithUnit } from '$lib/utils/format'
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
 	import { createProductJsonLd, createBreadcrumbJsonLd } from '$lib/utils/seo'
+	import { trackProductView, trackProductOrder, trackWhatsAppClick } from '$lib/utils/analytics'
 
 	let { data } = $props()
 
@@ -46,6 +48,12 @@
 				)
 			: ''
 	)
+
+	$effect(() => {
+		if (product) {
+			trackProductView(product.name, product.price, product.category)
+		}
+	})
 
 	let qty = $state(1)
 	let catatan = $state('')
@@ -102,6 +110,13 @@
 {#if product}
 	<section class="py-10 sm:py-16">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<Breadcrumb
+				items={[
+					{ label: 'Beranda', href: '/' },
+					{ label: 'Produk', href: '/produk' },
+					{ label: product.name }
+				]}
+			/>
 			<div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
 				<!-- Product image -->
 				<div class="relative aspect-square overflow-hidden rounded-2xl bg-primary-surface">
@@ -219,6 +234,12 @@
 							href={buildOrderLink()}
 							target="_blank"
 							rel="noopener noreferrer"
+							onclick={() => {
+								if (product) {
+									trackProductOrder(product.name, qty, subtotal)
+									trackWhatsAppClick('product_detail', product.name)
+								}
+							}}
 							class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
 						>
 							<Send class="h-4 w-4" />
