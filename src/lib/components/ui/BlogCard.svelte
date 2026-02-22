@@ -25,7 +25,7 @@
 </script>
 
 <article
-	class="group overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+	class="group flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
 >
 	<a href="/blog/{slug}" class="relative block aspect-video overflow-hidden bg-primary-surface">
 		{#if coverImageUrl}
@@ -45,7 +45,7 @@
 		</div>
 	</a>
 
-	<div class="p-5">
+	<div class="flex flex-1 flex-col p-5">
 		<a href="/blog/{slug}">
 			<h3
 				class="line-clamp-2 text-base font-bold text-neutral-900 transition-colors group-hover:text-primary"
@@ -53,7 +53,7 @@
 				{title}
 			</h3>
 		</a>
-		<p class="mt-2 line-clamp-3 text-sm text-neutral-600">{excerpt}</p>
+		<p class="mt-2 flex-1 line-clamp-3 text-sm text-neutral-600">{excerpt}</p>
 		<div class="mt-4 flex items-center gap-3 text-xs text-neutral-600">
 			<span>{formatDate(publishedAt)}</span>
 			{#if readingTimeMinutes}

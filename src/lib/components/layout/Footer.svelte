@@ -10,8 +10,8 @@
 		{ href: '/langganan', label: 'Langganan' },
 		{ href: '/tentang', label: 'Tentang Kami' },
 		{ href: '/kerjasama', label: 'Kerjasama' },
-		{ href: '/eduwisata', label: 'Eduwisata' },
 		{ href: '/blog', label: 'Blog' },
+		{ href: '/eduwisata', label: 'Eduwisata' },
 		{ href: '/kontak', label: 'Kontak' }
 	]
 
