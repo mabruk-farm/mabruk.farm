@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import Anthropic from '@anthropic-ai/sdk'
-import { ANTHROPIC_API_KEY } from '$env/static/private'
+import { env } from '$env/dynamic/private'
 import { allProducts } from '$lib/data/products'
 import { formatPriceWithUnit } from '$lib/utils/format'
 
@@ -41,8 +40,13 @@ Jika tidak tahu jawabannya, arahkan ke WhatsApp admin.
 Jangan jawab pertanyaan di luar topik Mabruk Farm.
 Jawab dengan ringkas dan jelas (maksimal 2–3 paragraf).`
 
+const LLM_BASE_URL = env.LLM_BASE_URL || 'https://api.moonshot.ai/v1'
+const LLM_MODEL = env.LLM_MODEL || 'kimi-k2.5'
+
 export const POST: RequestHandler = async ({ request }) => {
-	if (!ANTHROPIC_API_KEY) {
+	const apiKey = env.LLM_API_KEY
+
+	if (!apiKey) {
 		return json(
 			{
 				error:
@@ -72,26 +76,70 @@ export const POST: RequestHandler = async ({ request }) => {
 			return json({ error: 'Pesan pertama harus dari pengguna.' }, { status: 400 })
 		}
 
-		const client = new Anthropic({ apiKey: ANTHROPIC_API_KEY })
-
-		const stream = await client.messages.create({
-			model: 'claude-3-5-haiku-20241022',
-			max_tokens: 1024,
-			system: SYSTEM_PROMPT,
-			messages: sanitizedMessages,
-			stream: true
+		const response = await fetch(`${LLM_BASE_URL}/chat/completions`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${apiKey}`
+			},
+			body: JSON.stringify({
+				model: LLM_MODEL,
+				max_tokens: 1024,
+				stream: true,
+				messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...sanitizedMessages]
+			})
 		})
+
+		if (!response.ok) {
+			const errorText = await response.text()
+			console.error('[Chat API] LLM error:', response.status, errorText)
+			return json(
+				{
+					error:
+						'Terjadi kesalahan pada layanan AI. Silakan hubungi kami via WhatsApp di 0852-6945-8526.'
+				},
+				{ status: 502 }
+			)
+		}
 
 		const readableStream = new ReadableStream({
 			async start(controller) {
 				const encoder = new TextEncoder()
+				const decoder = new TextDecoder()
+				const reader = response.body?.getReader()
+
+				if (!reader) {
+					controller.close()
+					return
+				}
+
+				let buffer = ''
+
 				try {
-					for await (const event of stream) {
-						if (
-							event.type === 'content_block_delta' &&
-							event.delta.type === 'text_delta'
-						) {
-							controller.enqueue(encoder.encode(event.delta.text))
+					while (true) {
+						const { done, value } = await reader.read()
+						if (done) break
+
+						buffer += decoder.decode(value, { stream: true })
+						const lines = buffer.split('\n')
+						buffer = lines.pop() || ''
+
+						for (const line of lines) {
+							const trimmed = line.trim()
+							if (!trimmed || !trimmed.startsWith('data: ')) continue
+
+							const data = trimmed.slice(6)
+							if (data === '[DONE]') break
+
+							try {
+								const parsed = JSON.parse(data)
+								const content = parsed.choices?.[0]?.delta?.content
+								if (content) {
+									controller.enqueue(encoder.encode(content))
+								}
+							} catch {
+								// skip malformed JSON chunks
+							}
 						}
 					}
 					controller.close()
