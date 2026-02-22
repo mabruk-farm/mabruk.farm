@@ -1,16 +1,5 @@
 <script lang="ts">
-	import {
-		Package,
-		CalendarCheck,
-		Truck,
-		Percent,
-		RefreshCw,
-		Leaf,
-		Heart,
-		CheckCircle,
-		MessageCircle,
-		Send
-	} from 'lucide-svelte'
+	import { CheckCircle, MessageCircle, Send } from 'lucide-svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Accordion from '$lib/components/ui/Accordion.svelte'
@@ -24,6 +13,10 @@
 	} from '$lib/utils/whatsapp'
 	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 	import { createBreadcrumbJsonLd } from '$lib/utils/seo'
+	import { getIcon } from '$lib/utils/icons'
+
+	let { data } = $props()
+	const { pageData } = data
 
 	const breadcrumbJsonLd = JSON.stringify(
 		createBreadcrumbJsonLd([
@@ -32,7 +25,6 @@
 		])
 	)
 
-	// Form state
 	let paket = $state('')
 	let nama = $state('')
 	let noWa = $state('')
@@ -49,143 +41,14 @@
 
 	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
-		const data: LanggananFormData = { paket, nama, noWa, alamat, pesan }
-		const message = buildLanggananMessage(data)
+		const formData: LanggananFormData = { paket, nama, noWa, alamat, pesan }
+		const message = buildLanggananMessage(formData)
 		const link = createWhatsAppLink(message)
 		trackFormSubmit('langganan')
 		trackWhatsAppClick('langganan_form')
 		window.open(link, '_blank')
 		submitted = true
 	}
-
-	const steps = [
-		{
-			icon: Package,
-			title: 'Pilih Paket',
-			description: 'Pilih paket langganan sesuai kebutuhan keluarga Anda.'
-		},
-		{
-			icon: CalendarCheck,
-			title: 'Atur Jadwal',
-			description: 'Tentukan hari pengiriman yang paling cocok untuk Anda.'
-		},
-		{
-			icon: Truck,
-			title: 'Terima di Rumah',
-			description: 'Sayuran segar diantar ke pintu rumah Anda setiap minggu.'
-		}
-	]
-
-	const packages = [
-		{
-			name: 'Paket Hemat',
-			price: 'Rp 50.000',
-			period: '/minggu',
-			weight: '2 kg',
-			target: 'Cocok untuk 1–2 orang',
-			includes: [
-				'Sayuran daun campuran (2 jenis)',
-				'Dipanen segar di hari pengiriman',
-				'Gratis ongkir area Pesawaran',
-				'Bisa ganti jenis sayuran'
-			],
-			highlighted: false
-		},
-		{
-			name: 'Paket Keluarga',
-			price: 'Rp 100.000',
-			period: '/minggu',
-			weight: '4 kg',
-			target: 'Cocok untuk 3–4 orang',
-			includes: [
-				'Sayuran daun campuran (3–4 jenis)',
-				'Termasuk 1 jenis sayuran premium',
-				'Dipanen segar di hari pengiriman',
-				'Gratis ongkir Pesawaran & BDL Kota',
-				'Variasi berbeda tiap minggu',
-				'Bisa request jenis sayuran'
-			],
-			highlighted: true
-		},
-		{
-			name: 'Paket Premium',
-			price: 'Rp 150.000',
-			period: '/minggu',
-			weight: '5 kg',
-			target: 'Cocok untuk 4–6 orang',
-			includes: [
-				'Sayuran daun + premium (4–5 jenis)',
-				'Termasuk herbs segar (basil/mint)',
-				'Dipanen segar di hari pengiriman',
-				'Gratis ongkir semua area layanan',
-				'Variasi berbeda tiap minggu',
-				'Prioritas pengiriman pagi',
-				'Bisa request & custom isi paket'
-			],
-			highlighted: false
-		}
-	]
-
-	const benefits = [
-		{
-			icon: Percent,
-			title: 'Hemat 10–15%',
-			description: 'Harga langganan lebih murah dibanding beli satuan.'
-		},
-		{
-			icon: Truck,
-			title: 'Prioritas Pengiriman',
-			description: 'Pelanggan langganan selalu diprioritaskan pengirimannya.'
-		},
-		{
-			icon: RefreshCw,
-			title: 'Variasi Tiap Minggu',
-			description: 'Isi paket berbeda setiap minggu agar tidak bosan.'
-		},
-		{
-			icon: CalendarCheck,
-			title: 'Bisa Pause Kapan Saja',
-			description: 'Sedang pergi? Pause langganan dan lanjutkan saat kembali.'
-		},
-		{
-			icon: Leaf,
-			title: 'Selalu Segar',
-			description: 'Sayuran dipanen di hari pengiriman, bukan stok gudang.'
-		},
-		{
-			icon: Heart,
-			title: 'Tanpa Komitmen Panjang',
-			description: 'Tidak ada kontrak. Bisa berhenti kapan saja tanpa penalti.'
-		}
-	]
-
-	const faqs = [
-		{
-			question: 'Bagaimana cara mendaftar langganan?',
-			answer:
-				'Cukup hubungi kami via WhatsApp, pilih paket yang diinginkan, dan tentukan hari pengiriman. Kami akan mengatur semuanya untuk Anda.'
-		},
-		{
-			question: 'Bisa ganti isi paket setiap minggu?',
-			answer:
-				'Tentu! Anda bisa request jenis sayuran tertentu. Cukup kabari kami via WhatsApp sebelum hari pengiriman.'
-		},
-		{
-			question: 'Bagaimana jika saya sedang pergi?',
-			answer:
-				'Anda bisa pause langganan kapan saja. Hubungi kami minimal 1 hari sebelum jadwal pengiriman untuk skip minggu tersebut.'
-		},
-		{
-			question: 'Bagaimana sistem pembayarannya?',
-			answer:
-				'Pembayaran dilakukan per minggu via transfer bank (BCA) atau e-wallet (Dana, OVO, GoPay). Bisa juga bayar bulanan untuk kemudahan.'
-		},
-		{
-			question: 'Apakah ada minimal durasi langganan?',
-			answer:
-				'Tidak ada. Anda bisa mulai dan berhenti kapan saja. Kami yakin Anda akan terus berlangganan karena kualitas sayuran kami!'
-		}
-	]
 </script>
 
 <svelte:head>
@@ -217,11 +80,10 @@
 			Hemat & Praktis
 		</span>
 		<h1 class="text-3xl font-bold text-white md:text-4xl">
-			Sayuran Segar Setiap Minggu, Tanpa Ribet
+			{pageData.heroTitle}
 		</h1>
 		<p class="mx-auto mt-4 max-w-2xl text-base text-white/80">
-			Pilih paket, kami antar ke pintu rumah Anda setiap minggu. Segar dari greenhouse, langsung
-			ke meja makan. Tanpa komitmen panjang.
+			{pageData.heroSubtitle}
 		</p>
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
 			<Button variant="amber" href="#paket" class="px-6 py-3">Pilih Paket Sekarang</Button>
@@ -240,12 +102,13 @@
 			subtitle="Tiga langkah mudah untuk sayuran segar setiap minggu."
 		/>
 		<div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
-			{#each steps as step, i}
+			{#each pageData.steps as step, i}
+				{@const StepIcon = getIcon(step.icon)}
 				<div class="text-center">
 					<div
 						class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-surface"
 					>
-						<step.icon class="h-6 w-6 text-primary" />
+						<StepIcon class="h-6 w-6 text-primary" />
 					</div>
 					<div
 						class="mx-auto mt-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white"
@@ -268,7 +131,7 @@
 			subtitle="Sesuaikan dengan kebutuhan dan budget keluarga Anda."
 		/>
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-			{#each packages as pkg}
+			{#each pageData.packages as pkg}
 				<div
 					class="relative flex flex-col rounded-xl p-6 {pkg.highlighted
 						? 'bg-primary text-white ring-2 ring-primary'
@@ -350,12 +213,13 @@
 			subtitle="Lebih hemat, lebih praktis, selalu segar."
 		/>
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-			{#each benefits as benefit}
+			{#each pageData.benefits as benefit}
+				{@const BenefitIcon = getIcon(benefit.icon)}
 				<div class="flex items-start gap-4 rounded-xl bg-neutral-50 p-5">
 					<div
 						class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-surface"
 					>
-						<benefit.icon class="h-5 w-5 text-primary" />
+						<BenefitIcon class="h-5 w-5 text-primary" />
 					</div>
 					<div>
 						<h3 class="text-sm font-bold text-neutral-900">{benefit.title}</h3>
@@ -371,7 +235,12 @@
 <section class="bg-neutral-50 py-14 sm:py-16">
 	<div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
 		<SectionHeading title="Pertanyaan Tentang Langganan" />
-		<Accordion items={faqs} />
+		<Accordion
+			items={data.faqs.map((f: { question: string; answer: string }) => ({
+				question: f.question,
+				answer: f.answer
+			}))}
+		/>
 	</div>
 </section>
 

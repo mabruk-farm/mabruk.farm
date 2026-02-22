@@ -7,7 +7,16 @@ import {
 	allBlogPostsQuery,
 	blogPostBySlugQuery,
 	allTestimonialsQuery,
-	allPartnersQuery
+	allPartnersQuery,
+	allFaqsQuery,
+	faqsByCategoryQuery,
+	allGalleryPhotosQuery,
+	aboutPageQuery,
+	langgananPageQuery,
+	eduwisataPageQuery,
+	kerjasamaPageQuery,
+	caraPesanPageQuery,
+	areaPengirimanPageQuery
 } from './queries'
 import type {
 	Product,
@@ -15,7 +24,15 @@ import type {
 	BlogPost,
 	BlogPostDetail,
 	Testimonial,
-	Partner
+	Partner,
+	FaqItem,
+	GalleryPhoto,
+	AboutPageData,
+	LanggananPageData,
+	EduwisataPageData,
+	KerjasamaPageData,
+	CaraPesanPageData,
+	AreaPengirimanPageData
 } from './types'
 import {
 	allProducts as staticAllProducts,
@@ -24,6 +41,14 @@ import {
 	blogPosts as staticBlogPosts,
 	testimonials as staticTestimonials,
 	partners as staticPartners,
+	faqs as staticFaqs,
+	galleryPhotos as staticGalleryPhotos,
+	aboutPage as staticAboutPage,
+	langgananPage as staticLanggananPage,
+	eduwisataPage as staticEduwisataPage,
+	kerjasamaPage as staticKerjasamaPage,
+	caraPesanPage as staticCaraPesanPage,
+	areaPengirimanPage as staticAreaPengirimanPage,
 	type StaticProduct,
 	type StaticProductDetail,
 	type StaticBlogPost,
@@ -288,5 +313,190 @@ export async function fetchPartners(): Promise<Partner[]> {
 	} catch (e) {
 		console.error('Sanity fetchPartners error:', e)
 		return staticPartners.map(mapStaticPartner)
+	}
+}
+
+// --- FAQ fetchers ---
+
+export async function fetchFaqs(): Promise<FaqItem[]> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticFaqs
+	}
+	try {
+		const data = await sanityClient.fetch(allFaqsQuery)
+		if (!data?.length) return staticFaqs
+		return data
+	} catch (e) {
+		console.error('Sanity fetchFaqs error:', e)
+		return staticFaqs
+	}
+}
+
+export async function fetchFaqsByCategory(category: string): Promise<FaqItem[]> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticFaqs.filter((f) => f.category === category)
+	}
+	try {
+		const data = await sanityClient.fetch(faqsByCategoryQuery, { category })
+		if (!data?.length) return staticFaqs.filter((f) => f.category === category)
+		return data
+	} catch (e) {
+		console.error('Sanity fetchFaqsByCategory error:', e)
+		return staticFaqs.filter((f) => f.category === category)
+	}
+}
+
+// --- Gallery fetcher ---
+
+export async function fetchGalleryPhotos(): Promise<GalleryPhoto[]> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticGalleryPhotos
+	}
+	try {
+		const data = await sanityClient.fetch(allGalleryPhotosQuery)
+		if (!data?.length) return staticGalleryPhotos
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return data.map((p: any) => ({
+			_id: p._id,
+			imageUrl: urlFor(p.image),
+			alt: p.alt ?? '',
+			category: p.category ?? 'greenhouse'
+		}))
+	} catch (e) {
+		console.error('Sanity fetchGalleryPhotos error:', e)
+		return staticGalleryPhotos
+	}
+}
+
+// --- Singleton page fetchers ---
+
+export async function fetchAboutPage(): Promise<AboutPageData> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticAboutPage
+	}
+	try {
+		const data = await sanityClient.fetch(aboutPageQuery)
+		if (!data) return staticAboutPage
+		return {
+			heroTitle: data.heroTitle ?? staticAboutPage.heroTitle,
+			heroSubtitle: data.heroSubtitle ?? staticAboutPage.heroSubtitle,
+			namaMeaning: data.namaMeaning ?? staticAboutPage.namaMeaning,
+			nameMeaningSubtext: data.nameMeaningSubtext ?? staticAboutPage.nameMeaningSubtext,
+			storyParagraphs: data.storyParagraphs ?? staticAboutPage.storyParagraphs,
+			storyImageUrl: urlFor(data.storyImage) ?? staticAboutPage.storyImageUrl,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			team: (data.team ?? []).map((t: any) => ({
+				name: t.name,
+				description: t.description,
+				imageUrl: urlFor(t.image)
+			})),
+			processSteps: data.processSteps ?? staticAboutPage.processSteps,
+			values: data.values ?? staticAboutPage.values
+		}
+	} catch (e) {
+		console.error('Sanity fetchAboutPage error:', e)
+		return staticAboutPage
+	}
+}
+
+export async function fetchLanggananPage(): Promise<LanggananPageData> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticLanggananPage
+	}
+	try {
+		const data = await sanityClient.fetch(langgananPageQuery)
+		if (!data) return staticLanggananPage
+		return {
+			heroTitle: data.heroTitle ?? staticLanggananPage.heroTitle,
+			heroSubtitle: data.heroSubtitle ?? staticLanggananPage.heroSubtitle,
+			steps: data.steps ?? staticLanggananPage.steps,
+			packages: data.packages ?? staticLanggananPage.packages,
+			benefits: data.benefits ?? staticLanggananPage.benefits
+		}
+	} catch (e) {
+		console.error('Sanity fetchLanggananPage error:', e)
+		return staticLanggananPage
+	}
+}
+
+export async function fetchEduwisataPage(): Promise<EduwisataPageData> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticEduwisataPage
+	}
+	try {
+		const data = await sanityClient.fetch(eduwisataPageQuery)
+		if (!data) return staticEduwisataPage
+		return {
+			heroTitle: data.heroTitle ?? staticEduwisataPage.heroTitle,
+			heroSubtitle: data.heroSubtitle ?? staticEduwisataPage.heroSubtitle,
+			activities: data.activities ?? staticEduwisataPage.activities,
+			photos: data.photos ?? staticEduwisataPage.photos,
+			packages: data.packages ?? staticEduwisataPage.packages,
+			practicalInfo: data.practicalInfo ?? staticEduwisataPage.practicalInfo
+		}
+	} catch (e) {
+		console.error('Sanity fetchEduwisataPage error:', e)
+		return staticEduwisataPage
+	}
+}
+
+export async function fetchKerjasamaPage(): Promise<KerjasamaPageData> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticKerjasamaPage
+	}
+	try {
+		const data = await sanityClient.fetch(kerjasamaPageQuery)
+		if (!data) return staticKerjasamaPage
+		return {
+			heroTitle: data.heroTitle ?? staticKerjasamaPage.heroTitle,
+			heroSubtitle: data.heroSubtitle ?? staticKerjasamaPage.heroSubtitle,
+			benefits: data.benefits ?? staticKerjasamaPage.benefits,
+			tiers: data.tiers ?? staticKerjasamaPage.tiers,
+			pricingProducts: data.pricingProducts ?? staticKerjasamaPage.pricingProducts,
+			extras: data.extras ?? staticKerjasamaPage.extras
+		}
+	} catch (e) {
+		console.error('Sanity fetchKerjasamaPage error:', e)
+		return staticKerjasamaPage
+	}
+}
+
+export async function fetchCaraPesanPage(): Promise<CaraPesanPageData> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticCaraPesanPage
+	}
+	try {
+		const data = await sanityClient.fetch(caraPesanPageQuery)
+		if (!data) return staticCaraPesanPage
+		return {
+			heroTitle: data.heroTitle ?? staticCaraPesanPage.heroTitle,
+			heroSubtitle: data.heroSubtitle ?? staticCaraPesanPage.heroSubtitle,
+			steps: data.steps ?? staticCaraPesanPage.steps,
+			infoCards: data.infoCards ?? staticCaraPesanPage.infoCards,
+			tips: data.tips ?? staticCaraPesanPage.tips
+		}
+	} catch (e) {
+		console.error('Sanity fetchCaraPesanPage error:', e)
+		return staticCaraPesanPage
+	}
+}
+
+export async function fetchAreaPengirimanPage(): Promise<AreaPengirimanPageData> {
+	if (!isSanityConfigured || !sanityClient) {
+		return staticAreaPengirimanPage
+	}
+	try {
+		const data = await sanityClient.fetch(areaPengirimanPageQuery)
+		if (!data) return staticAreaPengirimanPage
+		return {
+			heroTitle: data.heroTitle ?? staticAreaPengirimanPage.heroTitle,
+			heroSubtitle: data.heroSubtitle ?? staticAreaPengirimanPage.heroSubtitle,
+			zones: data.zones ?? staticAreaPengirimanPage.zones,
+			deliveryInfo: data.deliveryInfo ?? staticAreaPengirimanPage.deliveryInfo,
+			mapsEmbedUrl: data.mapsEmbedUrl ?? staticAreaPengirimanPage.mapsEmbedUrl
+		}
+	} catch (e) {
+		console.error('Sanity fetchAreaPengirimanPage error:', e)
+		return staticAreaPengirimanPage
 	}
 }

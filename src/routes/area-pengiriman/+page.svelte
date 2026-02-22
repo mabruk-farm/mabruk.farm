@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MapPin, Clock, Truck, Phone, Send, CheckCircle } from 'lucide-svelte'
+	import { Send, CheckCircle } from 'lucide-svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import FormInput from '$lib/components/ui/FormInput.svelte'
@@ -7,6 +7,10 @@
 	import { createWhatsAppLink, buildPageMessage, type BaseFormData } from '$lib/utils/whatsapp'
 	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 	import { createBreadcrumbJsonLd } from '$lib/utils/seo'
+	import { getIcon } from '$lib/utils/icons'
+
+	let { data } = $props()
+	const { pageData } = data
 
 	const breadcrumbJsonLd = JSON.stringify(
 		createBreadcrumbJsonLd([
@@ -23,8 +27,8 @@
 
 	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
-		const data: BaseFormData = { nama, noWa, alamat, pesan }
-		const message = buildPageMessage('Cek Area Pengiriman', data)
+		const formData: BaseFormData = { nama, noWa, alamat, pesan }
+		const message = buildPageMessage('Cek Area Pengiriman', formData)
 		const link = createWhatsAppLink(message)
 		trackFormSubmit('area_pengiriman')
 		trackWhatsAppClick('area_pengiriman_form')
@@ -32,36 +36,12 @@
 		submitted = true
 	}
 
-	const zones = [
-		{
-			zone: 'Zone 1',
-			area: 'Pesawaran (Way Khilau, Gedong Tataan, Padang Cermin)',
-			ongkir: 'Gratis',
-			estimasi: 'Same day',
-			color: 'bg-primary-surface text-primary'
-		},
-		{
-			zone: 'Zone 2',
-			area: 'Bandar Lampung Kota (Tanjung Karang, Teluk Betung, Sukarame)',
-			ongkir: 'Rp 10.000',
-			estimasi: 'Same day',
-			color: 'bg-green-50 text-green-700'
-		},
-		{
-			zone: 'Zone 3',
-			area: 'Bandar Lampung Pinggiran (Kemiling, Rajabasa, Way Halim)',
-			ongkir: 'Rp 15.000',
-			estimasi: 'Same day / Next day',
-			color: 'bg-amber-50 text-amber-700'
-		},
-		{
-			zone: 'Zone 4',
-			area: 'Luar area (Pringsewu, Metro, Lampung Selatan, dll)',
-			ongkir: 'Hubungi kami',
-			estimasi: 'Disesuaikan',
-			color: 'bg-neutral-100 text-neutral-600'
-		}
-	]
+	const colorThemeMap: Record<string, string> = {
+		primary: 'bg-primary-surface text-primary',
+		green: 'bg-green-50 text-green-700',
+		amber: 'bg-amber-50 text-amber-700',
+		neutral: 'bg-neutral-100 text-neutral-600'
+	}
 </script>
 
 <svelte:head>
@@ -93,11 +73,10 @@
 			Pengiriman
 		</span>
 		<h1 class="text-3xl font-bold text-white md:text-4xl">
-			Kami Mengantar Sayuran Segar ke Area Anda
+			{pageData.heroTitle}
 		</h1>
 		<p class="mx-auto mt-4 max-w-2xl text-base text-white/80">
-			Dari greenhouse di Gunung Sari, kami mengirim sayuran segar ke Pesawaran, Bandar Lampung,
-			dan sekitarnya setiap hari.
+			{pageData.heroSubtitle}
 		</p>
 	</div>
 </section>
@@ -112,10 +91,10 @@
 
 		<!-- Mobile cards -->
 		<div class="space-y-4 lg:hidden">
-			{#each zones as zone}
+			{#each pageData.zones as zone}
 				<div class="rounded-xl border border-neutral-200 bg-white p-5">
 					<div class="flex items-center justify-between">
-						<span class="rounded-full px-3 py-1 text-xs font-bold {zone.color}">
+						<span class="rounded-full px-3 py-1 text-xs font-bold {colorThemeMap[zone.colorTheme] ?? ''}">
 							{zone.zone}
 						</span>
 						<span class="text-lg font-bold text-primary">{zone.ongkir}</span>
@@ -138,10 +117,10 @@
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-neutral-100">
-					{#each zones as zone}
+					{#each pageData.zones as zone}
 						<tr>
 							<td class="px-5 py-4">
-								<span class="rounded-full px-3 py-1 text-xs font-bold {zone.color}">
+								<span class="rounded-full px-3 py-1 text-xs font-bold {colorThemeMap[zone.colorTheme] ?? ''}">
 									{zone.zone}
 								</span>
 							</td>
@@ -161,45 +140,16 @@
 	<div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
 		<SectionHeading title="Jadwal & Ketentuan Pengiriman" />
 		<div class="space-y-4">
-			<div class="flex items-start gap-3 rounded-xl bg-white p-5">
-				<Clock class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-				<div>
-					<p class="text-sm font-semibold text-neutral-900">Jadwal Pengiriman</p>
-					<p class="text-sm text-neutral-600">
-						Senin–Sabtu, pukul 14:00–17:00 WIB. Minggu & hari libur nasional tutup.
-					</p>
+			{#each pageData.deliveryInfo as info}
+				{@const InfoIcon = getIcon(info.icon)}
+				<div class="flex items-start gap-3 rounded-xl bg-white p-5">
+					<InfoIcon class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+					<div>
+						<p class="text-sm font-semibold text-neutral-900">{info.title}</p>
+						<p class="text-sm text-neutral-600">{info.description}</p>
+					</div>
 				</div>
-			</div>
-			<div class="flex items-start gap-3 rounded-xl bg-white p-5">
-				<Truck class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-				<div>
-					<p class="text-sm font-semibold text-neutral-900">Cutoff Order</p>
-					<p class="text-sm text-neutral-600">
-						Order sebelum pukul 10:00 WIB akan dikirim di hari yang sama. Setelahnya, masuk
-						pengiriman hari berikutnya.
-					</p>
-				</div>
-			</div>
-			<div class="flex items-start gap-3 rounded-xl bg-white p-5">
-				<MapPin class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-				<div>
-					<p class="text-sm font-semibold text-neutral-900">Minimal Order</p>
-					<p class="text-sm text-neutral-600">
-						Minimal pembelian Rp 50.000. Pelanggan langganan mendapat gratis ongkir untuk
-						area tertentu.
-					</p>
-				</div>
-			</div>
-			<div class="flex items-start gap-3 rounded-xl bg-white p-5">
-				<Phone class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-				<div>
-					<p class="text-sm font-semibold text-neutral-900">Luar Area?</p>
-					<p class="text-sm text-neutral-600">
-						Untuk pengiriman ke area di luar zona di atas, silakan hubungi kami. Kami akan
-						bantu carikan solusi terbaik.
-					</p>
-				</div>
-			</div>
+			{/each}
 		</div>
 	</div>
 </section>
@@ -213,7 +163,7 @@
 		/>
 		<div class="overflow-hidden rounded-xl">
 			<iframe
-				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d994.1!2d104.9711622!3d-5.4573083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e472b1da9737d2d%3A0xc8035f5e16d3ca9e!2sMABRUK%20FARM!5e0!3m2!1sid!2sid"
+				src={pageData.mapsEmbedUrl}
 				width="100%"
 				height="350"
 				style="border:0;"
