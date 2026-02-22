@@ -10,3 +10,180 @@ export function createOrderLink(productName: string): string {
 		`Halo Mabruk Farm! Saya mau pesan ${productName}. Bisa info ketersediaan dan harganya?`
 	)
 }
+
+// --- Form Data Types ---
+
+export interface BaseFormData {
+	nama: string
+	noWa: string
+	alamat: string
+	pesan: string
+}
+
+export interface KontakFormData extends BaseFormData {
+	subjek: string
+}
+
+export interface KerjasamaFormData extends BaseFormData {
+	company: string
+	jabatan: string
+	jenisBisnis: string
+	estimasiKebutuhan: string
+}
+
+export interface RequestTanamFormData extends BaseFormData {
+	jenisSayur: string
+	estimasi: string
+}
+
+// --- Message Builders ---
+
+function addLine(lines: string[], label: string, value: string): void {
+	if (value.trim()) {
+		lines.push(`${label}: ${value.trim()}`)
+	}
+}
+
+export function buildKontakMessage(data: KontakFormData): string {
+	const lines: string[] = ['*Form Kontak — mabruk.farm*', '']
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	addLine(lines, 'Subjek', data.subjek)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildKerjasamaMessage(data: KerjasamaFormData): string {
+	const lines: string[] = ['*Form Kerjasama B2B — mabruk.farm*', '']
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	addLine(lines, 'Perusahaan', data.company)
+	addLine(lines, 'Jabatan', data.jabatan)
+	addLine(lines, 'Jenis Bisnis', data.jenisBisnis)
+	addLine(lines, 'Estimasi', data.estimasiKebutuhan)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildRequestTanamMessage(data: RequestTanamFormData): string {
+	const lines: string[] = ['*Request Tanam — mabruk.farm*', '']
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	addLine(lines, 'Jenis Sayur', data.jenisSayur)
+	addLine(lines, 'Estimasi', data.estimasi)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildOrderMessage(data: BaseFormData): string {
+	const lines: string[] = ['*Chat dari Website — mabruk.farm*', '']
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+// --- Additional Form Types ---
+
+export interface LanggananFormData extends BaseFormData {
+	paket: string
+}
+
+export interface EduwisataFormData extends BaseFormData {
+	paket: string
+	jumlahPeserta: string
+	tanggalKunjungan: string
+}
+
+export interface ProductOrderFormData {
+	nama: string
+	noWa: string
+	alamat: string
+	productName: string
+	qty: number
+	unit: string
+	estimasiHarga: string
+	catatan: string
+}
+
+// --- Additional Message Builders ---
+
+export function buildLanggananMessage(data: LanggananFormData): string {
+	const lines: string[] = ['*Form Langganan — mabruk.farm*', '']
+	addLine(lines, 'Paket', data.paket)
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildEduwisataMessage(data: EduwisataFormData): string {
+	const lines: string[] = ['*Reservasi Eduwisata — mabruk.farm*', '']
+	addLine(lines, 'Paket', data.paket)
+	addLine(lines, 'Jumlah Peserta', data.jumlahPeserta)
+	addLine(lines, 'Tanggal Kunjungan', data.tanggalKunjungan)
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildProductOrderMessage(data: ProductOrderFormData): string {
+	const lines: string[] = ['*Pesan Produk — mabruk.farm*', '']
+	addLine(lines, 'Produk', data.productName)
+	lines.push(`Jumlah: ${data.qty} ${data.unit}`)
+	addLine(lines, 'Estimasi', data.estimasiHarga)
+	lines.push('')
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.catatan.trim()) {
+		lines.push('')
+		lines.push('Catatan:')
+		lines.push(data.catatan.trim())
+	}
+	return lines.join('\n')
+}
+
+export function buildPageMessage(source: string, data: BaseFormData): string {
+	const lines: string[] = [`*${source} — mabruk.farm*`, '']
+	addLine(lines, 'Nama', data.nama)
+	addLine(lines, 'No. WA', data.noWa)
+	addLine(lines, 'Alamat', data.alamat)
+	if (data.pesan.trim()) {
+		lines.push('')
+		lines.push('Pesan:')
+		lines.push(data.pesan.trim())
+	}
+	return lines.join('\n')
+}

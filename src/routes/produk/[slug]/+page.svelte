@@ -6,7 +6,11 @@
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import { Leaf, Clock, Apple, Refrigerator, Minus, Plus, Send } from 'lucide-svelte'
 	import { formatPrice, formatPriceWithUnit } from '$lib/utils/format'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import {
+		createWhatsAppLink,
+		buildProductOrderMessage,
+		type ProductOrderFormData
+	} from '$lib/utils/whatsapp'
 	import { createProductJsonLd, createBreadcrumbJsonLd } from '$lib/utils/seo'
 	import { trackProductView, trackProductOrder, trackWhatsAppClick } from '$lib/utils/analytics'
 
@@ -57,6 +61,9 @@
 
 	let qty = $state(1)
 	let catatan = $state('')
+	let nama = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
 
 	const subtotal = $derived(product ? product.price * qty : 0)
 
@@ -70,15 +77,17 @@
 
 	function buildOrderLink() {
 		if (!product) return '#'
-		let msg = `Halo Mabruk Farm! Saya mau pesan:\n\n`
-		msg += `${product.name}\n`
-		msg += `Jumlah: ${qty} ${product.unit}\n`
-		msg += `Estimasi: ${formatPrice(subtotal)}\n`
-		if (catatan.trim()) {
-			msg += `\nCatatan: ${catatan.trim()}\n`
+		const data: ProductOrderFormData = {
+			nama,
+			noWa,
+			alamat,
+			productName: product.name,
+			qty,
+			unit: product.unit,
+			estimasiHarga: formatPrice(subtotal),
+			catatan
 		}
-		msg += `\nTerima kasih!`
-		return createWhatsAppLink(msg)
+		return createWhatsAppLink(buildProductOrderMessage(data))
 	}
 
 	type BadgeVariant = 'bestSeller' | 'premium' | 'favorit' | 'category'
@@ -184,6 +193,40 @@
 					<!-- Pre-order form -->
 					<div class="mt-8 rounded-xl border border-neutral-200 p-5">
 						<p class="text-sm font-semibold text-neutral-900">Pesan Produk Ini</p>
+
+						<!-- Nama & No. WA -->
+						<div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+							<div>
+								<label for="nama" class="mb-1 block text-xs font-medium text-neutral-600">Nama *</label>
+								<input
+									id="nama"
+									bind:value={nama}
+									required
+									placeholder="Nama Anda"
+									class="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+								/>
+							</div>
+							<div>
+								<label for="noWa" class="mb-1 block text-xs font-medium text-neutral-600">No. WhatsApp *</label>
+								<input
+									id="noWa"
+									type="tel"
+									bind:value={noWa}
+									required
+									placeholder="08xxxxxxxxxx"
+									class="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+								/>
+							</div>
+						</div>
+						<div class="mt-3">
+							<label for="alamat" class="mb-1 block text-xs font-medium text-neutral-600">Alamat Pengiriman</label>
+							<input
+								id="alamat"
+								bind:value={alamat}
+								placeholder="Alamat lengkap"
+								class="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+							/>
+						</div>
 
 						<!-- Quantity -->
 						<div class="mt-4 flex items-center gap-3">

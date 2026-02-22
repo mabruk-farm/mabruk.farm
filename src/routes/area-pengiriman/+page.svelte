@@ -1,8 +1,11 @@
 <script lang="ts">
-	import { MapPin, Clock, Truck, Phone } from 'lucide-svelte'
+	import { MapPin, Clock, Truck, Phone, Send, CheckCircle } from 'lucide-svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import FormInput from '$lib/components/ui/FormInput.svelte'
+	import FormTextarea from '$lib/components/ui/FormTextarea.svelte'
+	import { createWhatsAppLink, buildPageMessage, type BaseFormData } from '$lib/utils/whatsapp'
+	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 	import { createBreadcrumbJsonLd } from '$lib/utils/seo'
 
 	const breadcrumbJsonLd = JSON.stringify(
@@ -12,9 +15,22 @@
 		])
 	)
 
-	const waLink = createWhatsAppLink(
-		'Halo Mabruk Farm, saya mau cek apakah area saya tercover untuk pengiriman sayuran?'
-	)
+	let nama = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
+	let pesan = $state('')
+	let submitted = $state(false)
+
+	function handleSubmit(e: SubmitEvent) {
+		e.preventDefault()
+		const data: BaseFormData = { nama, noWa, alamat, pesan }
+		const message = buildPageMessage('Cek Area Pengiriman', data)
+		const link = createWhatsAppLink(message)
+		trackFormSubmit('area_pengiriman')
+		trackWhatsAppClick('area_pengiriman_form')
+		window.open(link, '_blank')
+		submitted = true
+	}
 
 	const zones = [
 		{
@@ -211,23 +227,57 @@
 	</div>
 </section>
 
-<!-- 5. CTA -->
-<section class="bg-primary py-14 sm:py-16">
-	<div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-		<h2 class="text-2xl font-bold text-white md:text-3xl">
-			Tidak Yakin Area Anda Tercover?
-		</h2>
-		<p class="mx-auto mt-4 max-w-xl text-base text-white/80">
-			Hubungi kami via WhatsApp, kirim lokasi Anda, dan kami bantu cek apakah bisa diantar ke
-			alamat Anda.
-		</p>
-		<div class="mt-8 flex flex-wrap justify-center gap-4">
-			<Button variant="whatsapp" href={waLink} class="px-8 py-3">
-				Cek Area via WhatsApp
-			</Button>
-			<Button variant="outline-light" href="/cara-pesan" class="px-8 py-3">
-				Cara Pesan
-			</Button>
-		</div>
+<!-- 5. Form Cek Area -->
+<section class="bg-primary-surface py-14 sm:py-16">
+	<div class="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
+		<SectionHeading
+			title="Tidak Yakin Area Anda Tercover?"
+			subtitle="Kirim alamat Anda dan kami bantu cek apakah bisa diantar."
+		/>
+		{#if submitted}
+			<div class="rounded-2xl bg-white p-8 text-center shadow-sm">
+				<CheckCircle class="mx-auto h-12 w-12 text-primary" />
+				<h3 class="mt-4 text-lg font-bold text-neutral-900">Terkirim!</h3>
+				<p class="mt-2 text-sm text-neutral-600">
+					WhatsApp sudah terbuka. Tinggal kirim dan tim kami akan cek area pengiriman Anda.
+				</p>
+				<Button variant="primary" onclick={() => (submitted = false)} class="mt-6 px-6 py-2.5">
+					Kirim Lagi
+				</Button>
+			</div>
+		{:else}
+			<form onsubmit={handleSubmit} class="space-y-4 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+				<FormInput id="nama" label="Nama" bind:value={nama} placeholder="Nama Anda" required />
+				<FormInput
+					id="noWa"
+					label="No. WhatsApp"
+					bind:value={noWa}
+					type="tel"
+					placeholder="08xxxxxxxxxx"
+					required
+				/>
+				<FormInput
+					id="alamat"
+					label="Alamat Lengkap"
+					bind:value={alamat}
+					placeholder="Alamat yang ingin dicek (kecamatan, kota)"
+					required
+				/>
+				<FormTextarea
+					id="pesan"
+					label="Catatan Tambahan"
+					bind:value={pesan}
+					placeholder="Misal: link Google Maps, patokan, dll."
+					rows={3}
+				/>
+				<button
+					type="submit"
+					class="flex w-full items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+				>
+					<Send class="h-4 w-4" />
+					Cek Area via WhatsApp
+				</button>
+			</form>
+		{/if}
 	</div>
 </section>

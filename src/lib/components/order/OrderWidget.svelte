@@ -1,32 +1,30 @@
 <script lang="ts">
 	import { X, Send, Leaf, CheckCircle, MessageCircle } from 'lucide-svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
-	import { trackOrderWidgetSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
+	import { createWhatsAppLink, buildOrderMessage } from '$lib/utils/whatsapp'
+	import {
+		trackOrderWidgetSubmit,
+		trackWhatsAppClick,
+		trackFormSubmit
+	} from '$lib/utils/analytics'
 
 	let { onclose }: { onclose: () => void } = $props()
 
 	let nama = $state('')
-	let noHp = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
 	let pesan = $state('')
 	let isSubmitted = $state(false)
 
-	const isValid = $derived(nama.trim() !== '' && noHp.trim() !== '')
+	const isValid = $derived(nama.trim() !== '' && noWa.trim() !== '')
 
 	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
 		if (!isValid) return
 
-		let message = `Halo Mabruk Farm!\n\n`
-		message += `Nama: ${nama.trim()}\n`
-		message += `No. HP: ${noHp.trim()}\n`
-
-		if (pesan.trim()) {
-			message += `\nPesan: ${pesan.trim()}\n`
-		}
-
-		message += `\nTerima kasih!`
-
+		const message = buildOrderMessage({ nama, noWa, alamat, pesan })
 		const waLink = createWhatsAppLink(message)
+
+		trackFormSubmit('order_widget')
 		trackOrderWidgetSubmit(nama.trim())
 		trackWhatsAppClick('order_widget')
 		window.open(waLink, '_blank')
@@ -35,7 +33,8 @@
 
 	function resetForm() {
 		nama = ''
-		noHp = ''
+		noWa = ''
+		alamat = ''
 		pesan = ''
 		isSubmitted = false
 	}
@@ -105,7 +104,8 @@
 					<div
 						class="max-w-[85%] rounded-2xl rounded-bl-md bg-white px-4 py-2.5 text-sm leading-relaxed text-neutral-900 shadow-sm"
 					>
-						Halo! 👋 Sebelum lanjut ke WhatsApp, isi data berikut ya supaya tim kami bisa langsung bantu kamu.
+						Halo! 👋 Sebelum lanjut ke WhatsApp, isi data berikut ya supaya tim kami bisa langsung
+						bantu kamu.
 					</div>
 				</div>
 
@@ -127,7 +127,7 @@
 					</div>
 				</div>
 
-				<!-- No HP field -->
+				<!-- No WA field -->
 				<div class="flex justify-start">
 					<div
 						class="max-w-[85%] space-y-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 shadow-sm"
@@ -137,9 +137,24 @@
 						</p>
 						<input
 							type="tel"
-							bind:value={noHp}
+							bind:value={noWa}
 							placeholder="08xxxxxxxxxx"
 							required
+							class="w-full border-b border-neutral-200 bg-transparent pb-1 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none"
+						/>
+					</div>
+				</div>
+
+				<!-- Alamat field -->
+				<div class="flex justify-start">
+					<div
+						class="max-w-[85%] space-y-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 shadow-sm"
+					>
+						<p class="text-xs font-medium text-neutral-500">Alamat</p>
+						<input
+							type="text"
+							bind:value={alamat}
+							placeholder="Kota atau alamat lengkap"
 							class="w-full border-b border-neutral-200 bg-transparent pb-1 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none"
 						/>
 					</div>
@@ -174,9 +189,12 @@
 						>
 							<p class="mb-1.5 text-xs font-medium text-neutral-500">Preview pesan kamu:</p>
 							<div class="rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-700">
-								<p>Halo Mabruk Farm!</p>
+								<p>*Chat dari Website — mabruk.farm*</p>
 								<p>Nama: {nama.trim()}</p>
-								<p>No. HP: {noHp.trim()}</p>
+								<p>No. WA: {noWa.trim()}</p>
+								{#if alamat.trim()}
+									<p>Alamat: {alamat.trim()}</p>
+								{/if}
 								{#if pesan.trim()}
 									<p class="mt-1">Pesan: {pesan.trim()}</p>
 								{/if}

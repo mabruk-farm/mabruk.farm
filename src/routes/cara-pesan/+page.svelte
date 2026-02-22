@@ -7,11 +7,16 @@
 		Clock,
 		Banknote,
 		Calendar,
-		Package
+		Package,
+		Send,
+		CheckCircle
 	} from 'lucide-svelte'
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import FormInput from '$lib/components/ui/FormInput.svelte'
+	import FormTextarea from '$lib/components/ui/FormTextarea.svelte'
+	import { createWhatsAppLink, buildPageMessage, type BaseFormData } from '$lib/utils/whatsapp'
+	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 	import { createBreadcrumbJsonLd } from '$lib/utils/seo'
 
 	const breadcrumbJsonLd = JSON.stringify(
@@ -21,7 +26,22 @@
 		])
 	)
 
-	const waLink = createWhatsAppLink('Halo Mabruk Farm, saya mau pesan sayuran')
+	let nama = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
+	let pesan = $state('')
+	let submitted = $state(false)
+
+	function handleSubmit(e: SubmitEvent) {
+		e.preventDefault()
+		const data: BaseFormData = { nama, noWa, alamat, pesan }
+		const message = buildPageMessage('Pesan dari Cara Pesan', data)
+		const link = createWhatsAppLink(message)
+		trackFormSubmit('cara_pesan')
+		trackWhatsAppClick('cara_pesan_form')
+		window.open(link, '_blank')
+		submitted = true
+	}
 
 	const steps = [
 		{
@@ -203,20 +223,51 @@
 	</div>
 </section>
 
-<!-- 5. CTA -->
-<section class="bg-primary py-14 sm:py-16">
-	<div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-		<h2 class="text-2xl font-bold text-white md:text-3xl">Siap Pesan Sayuran Segar?</h2>
-		<p class="mx-auto mt-4 max-w-xl text-base text-white/80">
-			Klik tombol di bawah untuk langsung terhubung dengan admin kami via WhatsApp.
-		</p>
-		<div class="mt-8 flex flex-wrap justify-center gap-4">
-			<Button variant="whatsapp" href={waLink} class="px-8 py-3">
-				Pesan Sekarang via WhatsApp
-			</Button>
-			<Button variant="outline-light" href="/produk" class="px-8 py-3">
-				Lihat Katalog Produk
-			</Button>
-		</div>
+<!-- 5. Form Pesan -->
+<section id="form" class="bg-primary-surface py-14 sm:py-16">
+	<div class="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
+		<SectionHeading
+			title="Siap Pesan Sayuran Segar?"
+			subtitle="Isi data Anda dan langsung terhubung ke admin kami via WhatsApp."
+		/>
+		{#if submitted}
+			<div class="rounded-2xl bg-white p-8 text-center shadow-sm">
+				<CheckCircle class="mx-auto h-12 w-12 text-primary" />
+				<h3 class="mt-4 text-lg font-bold text-neutral-900">Pesan Terkirim!</h3>
+				<p class="mt-2 text-sm text-neutral-600">
+					WhatsApp sudah terbuka. Tinggal kirim pesan dan admin kami akan segera merespons.
+				</p>
+				<Button variant="primary" onclick={() => (submitted = false)} class="mt-6 px-6 py-2.5">
+					Kirim Lagi
+				</Button>
+			</div>
+		{:else}
+			<form onsubmit={handleSubmit} class="space-y-4 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+				<FormInput id="nama" label="Nama" bind:value={nama} placeholder="Nama lengkap" required />
+				<FormInput
+					id="noWa"
+					label="No. WhatsApp"
+					bind:value={noWa}
+					type="tel"
+					placeholder="08xxxxxxxxxx"
+					required
+				/>
+				<FormInput id="alamat" label="Alamat Pengiriman" bind:value={alamat} placeholder="Alamat lengkap" />
+				<FormTextarea
+					id="pesan"
+					label="Pesanan / Catatan"
+					bind:value={pesan}
+					placeholder="Contoh: Mau pesan pakcoy 2kg dan selada 1kg untuk besok."
+					required
+				/>
+				<button
+					type="submit"
+					class="flex w-full items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+				>
+					<Send class="h-4 w-4" />
+					Pesan Sekarang via WhatsApp
+				</button>
+			</form>
+		{/if}
 	</div>
 </section>

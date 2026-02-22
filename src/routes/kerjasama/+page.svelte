@@ -10,7 +10,6 @@
 	import SectionHeading from '$lib/components/ui/SectionHeading.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import InquiryForm from '$lib/components/kerjasama/InquiryForm.svelte'
-	import { createWhatsAppLink } from '$lib/utils/whatsapp'
 	import { createBreadcrumbJsonLd } from '$lib/utils/seo'
 
 	const breadcrumbJsonLd = JSON.stringify(
@@ -18,10 +17,6 @@
 			{ name: 'Beranda', url: 'https://mabruk.farm' },
 			{ name: 'Kerjasama', url: 'https://mabruk.farm/kerjasama' }
 		])
-	)
-
-	const waLink = createWhatsAppLink(
-		'Halo Mabruk Farm, saya tertarik untuk kerjasama supply sayuran. Bisa info lebih lanjut?'
 	)
 
 	const benefits = [
@@ -141,8 +136,8 @@
 		</p>
 		<div class="mt-8 flex flex-wrap justify-center gap-4">
 			<Button variant="amber" href="#form" class="px-6 py-3">Ajukan Kerjasama</Button>
-			<Button variant="outline-light" href={waLink} class="px-6 py-3">
-				Hubungi Langsung
+			<Button variant="outline-light" href="#form" class="px-6 py-3">
+				Isi Form Inquiry
 			</Button>
 		</div>
 	</div>

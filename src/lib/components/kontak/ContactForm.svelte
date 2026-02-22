@@ -1,128 +1,90 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
-	import { trackFormSubmit } from '$lib/utils/analytics'
+	import FormInput from '$lib/components/ui/FormInput.svelte'
+	import FormTextarea from '$lib/components/ui/FormTextarea.svelte'
+	import FormSelect from '$lib/components/ui/FormSelect.svelte'
+	import { createWhatsAppLink, buildKontakMessage } from '$lib/utils/whatsapp'
+	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 
 	let nama = $state('')
-	let wa_email = $state('')
+	let noWa = $state('')
+	let alamat = $state('')
 	let subjek = $state('')
 	let pesan = $state('')
 
-	let isSubmitting = $state(false)
-	let submitStatus = $state<'idle' | 'success' | 'error'>('idle')
+	let submitStatus = $state<'idle' | 'success'>('idle')
 
 	const subjekOptions = ['Pemesanan', 'Kerjasama B2B', 'Pertanyaan Umum', 'Lainnya']
 
-	async function handleSubmit(e: SubmitEvent) {
+	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault()
-		if (!nama || !pesan) return
+		if (!nama.trim() || !noWa.trim() || !pesan.trim()) return
 
-		isSubmitting = true
-		submitStatus = 'idle'
+		const message = buildKontakMessage({ nama, noWa, alamat, subjek, pesan })
+		const waLink = createWhatsAppLink(message)
 
-		try {
-			const res = await fetch('/api/contact', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					type: 'kontak',
-					nama,
-					wa_email,
-					subjek,
-					pesan
-				})
-			})
+		trackFormSubmit('kontak')
+		trackWhatsAppClick('kontak_form')
+		window.open(waLink, '_blank', 'noopener,noreferrer')
 
-			if (res.ok) {
-				trackFormSubmit('kontak')
-				submitStatus = 'success'
-				nama = ''
-				wa_email = ''
-				subjek = ''
-				pesan = ''
-			} else {
-				submitStatus = 'error'
-			}
-		} catch {
-			submitStatus = 'error'
-		} finally {
-			isSubmitting = false
-		}
+		submitStatus = 'success'
+		nama = ''
+		noWa = ''
+		alamat = ''
+		subjek = ''
+		pesan = ''
 	}
-
-	const inputClass =
-		'w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
 </script>
 
 {#if submitStatus === 'success'}
 	<div class="rounded-xl bg-primary-surface p-8 text-center">
 		<p class="text-lg font-bold text-primary">Pesan Terkirim!</p>
 		<p class="mt-2 text-sm text-neutral-600">
-			Terima kasih sudah menghubungi kami. Tim kami akan membalas segera.
+			WhatsApp sudah terbuka. Silakan kirim pesan untuk melanjutkan chat dengan tim kami.
 		</p>
+		<button
+			onclick={() => (submitStatus = 'idle')}
+			class="mt-4 text-sm font-medium text-primary underline underline-offset-2 hover:text-primary-light"
+		>
+			Kirim pesan lagi
+		</button>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="space-y-5">
-		<div>
-			<label for="contact-nama" class="mb-1.5 block text-sm font-medium text-neutral-700"
-				>Nama *</label
-			>
-			<input
-				id="contact-nama"
-				type="text"
-				bind:value={nama}
-				required
-				class={inputClass}
-				placeholder="Nama Anda"
-			/>
-		</div>
+		<FormInput id="contact-nama" label="Nama" bind:value={nama} required placeholder="Nama Anda" />
 
-		<div>
-			<label for="contact-wa" class="mb-1.5 block text-sm font-medium text-neutral-700"
-				>WhatsApp / Email</label
-			>
-			<input
-				id="contact-wa"
-				type="text"
-				bind:value={wa_email}
-				class={inputClass}
-				placeholder="08xx-xxxx-xxxx atau email@anda.com"
-			/>
-		</div>
+		<FormInput
+			id="contact-wa"
+			label="No. WhatsApp"
+			bind:value={noWa}
+			type="tel"
+			required
+			placeholder="08xx-xxxx-xxxx"
+		/>
 
-		<div>
-			<label for="contact-subjek" class="mb-1.5 block text-sm font-medium text-neutral-700"
-				>Subjek</label
-			>
-			<select id="contact-subjek" bind:value={subjek} class={inputClass}>
-				<option value="">Pilih subjek</option>
-				{#each subjekOptions as opt}
-					<option value={opt}>{opt}</option>
-				{/each}
-			</select>
-		</div>
+		<FormInput
+			id="contact-alamat"
+			label="Alamat"
+			bind:value={alamat}
+			placeholder="Kota atau alamat lengkap"
+		/>
 
-		<div>
-			<label for="contact-pesan" class="mb-1.5 block text-sm font-medium text-neutral-700"
-				>Pesan *</label
-			>
-			<textarea
-				id="contact-pesan"
-				bind:value={pesan}
-				required
-				rows={4}
-				class={inputClass}
-				placeholder="Tulis pesan Anda di sini..."
-			></textarea>
-		</div>
+		<FormSelect
+			id="contact-subjek"
+			label="Subjek"
+			bind:value={subjek}
+			options={subjekOptions}
+			placeholder="Pilih subjek"
+		/>
 
-		{#if submitStatus === 'error'}
-			<p class="text-sm text-red-600">
-				Terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.
-			</p>
-		{/if}
+		<FormTextarea
+			id="contact-pesan"
+			label="Pesan"
+			bind:value={pesan}
+			required
+			placeholder="Tulis pesan Anda di sini..."
+		/>
 
-		<Button type="submit" variant="primary" disabled={isSubmitting} class="w-full py-3">
-			{isSubmitting ? 'Mengirim...' : 'Kirim Pesan'}
-		</Button>
+		<Button type="submit" variant="whatsapp" class="w-full py-3">Kirim via WhatsApp</Button>
 	</form>
 {/if}
