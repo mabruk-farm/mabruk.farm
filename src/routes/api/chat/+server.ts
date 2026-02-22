@@ -40,11 +40,10 @@ Jika tidak tahu jawabannya, arahkan ke WhatsApp admin.
 Jangan jawab pertanyaan di luar topik Mabruk Farm.
 Jawab dengan ringkas dan jelas (maksimal 2–3 paragraf).`
 
-const LLM_BASE_URL = env.LLM_BASE_URL || 'https://api.moonshot.ai/v1'
-const LLM_MODEL = env.LLM_MODEL || 'kimi-k2.5'
-
 export const POST: RequestHandler = async ({ request }) => {
 	const apiKey = env.LLM_API_KEY
+	const baseUrl = env.LLM_BASE_URL || 'https://opencode.ai/zen/v1'
+	const model = env.LLM_MODEL || 'kimi-k2.5-free'
 
 	if (!apiKey) {
 		return json(
@@ -76,14 +75,14 @@ export const POST: RequestHandler = async ({ request }) => {
 			return json({ error: 'Pesan pertama harus dari pengguna.' }, { status: 400 })
 		}
 
-		const response = await fetch(`${LLM_BASE_URL}/chat/completions`, {
+		const response = await fetch(`${baseUrl}/chat/completions`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${apiKey}`
 			},
 			body: JSON.stringify({
-				model: LLM_MODEL,
+				model,
 				max_tokens: 1024,
 				stream: true,
 				messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...sanitizedMessages]
