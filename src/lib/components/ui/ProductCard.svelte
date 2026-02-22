@@ -32,7 +32,7 @@
 </script>
 
 <article
-	class="overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+	class="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
 >
 	<a href="/produk/{slug}" class="relative block aspect-[4/3] overflow-hidden bg-primary-surface">
 		{#if imageUrl}
@@ -56,11 +56,11 @@
 		{/if}
 	</a>
 
-	<div class="p-4">
+	<div class="flex flex-1 flex-col p-4">
 		<a href="/produk/{slug}">
 			<h3 class="text-base font-bold text-neutral-900">{name}</h3>
 		</a>
-		<p class="mt-1 line-clamp-2 text-sm text-neutral-600">{shortDescription}</p>
+		<p class="mt-1 flex-1 line-clamp-2 text-sm text-neutral-600">{shortDescription}</p>
 		<div class="mt-3 flex items-center justify-between">
 			<span class="text-lg font-bold text-secondary">{formatPriceWithUnit(price, unit)}</span>
 			{#if available}

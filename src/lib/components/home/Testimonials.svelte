@@ -29,7 +29,7 @@
 
 		<Carousel gridClass="sm:grid md:grid-cols-3 sm:gap-6">
 			{#each testimonialList as testimonial (testimonial._id)}
-				<div class="min-w-0 flex-[0_0_85%] pl-3 sm:flex-auto sm:pl-0">
+				<div class="min-w-0 flex-[0_0_85%] pl-3 sm:flex-auto sm:pl-0 sm:h-full">
 					<TestimonialCard
 						quote={testimonial.quote}
 						name={testimonial.name}

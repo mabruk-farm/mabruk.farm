@@ -88,6 +88,20 @@
 		}
 	]
 
+	const pricingProducts = [
+		{ name: 'Pakcoy', retail: 25000, starter: 25000, business: 22500, enterprise: 20000 },
+		{ name: 'Selada Hijau', retail: 35000, starter: 35000, business: 31500, enterprise: 28000 },
+		{ name: 'Selada Merah', retail: 40000, starter: 40000, business: 36000, enterprise: 32000 },
+		{ name: 'Kangkung', retail: 20000, starter: 20000, business: 18000, enterprise: 16000 },
+		{ name: 'Bayam', retail: 22000, starter: 22000, business: 19800, enterprise: 17600 },
+		{ name: 'Sawi', retail: 23000, starter: 23000, business: 20700, enterprise: 18400 },
+		{ name: 'Kailan', retail: 35000, starter: 35000, business: 31500, enterprise: 28000 }
+	]
+
+	function formatPrice(value: number): string {
+		return `Rp ${value.toLocaleString('id-ID')}`
+	}
+
 	const extras = [
 		'Paket sayuran campuran sesuai kebutuhan menu',
 		'Custom packaging dengan label bisnis Anda (MOQ berlaku)',
@@ -193,7 +207,80 @@
 	</div>
 </section>
 
-<!-- 4. B2B Extras -->
+<!-- 4. Pricing Table -->
+<section class="bg-white py-14 sm:py-16">
+	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+		<SectionHeading
+			title="Estimasi Harga per Produk"
+			subtitle="Harga per kg berdasarkan tier kerjasama Anda."
+		/>
+
+		<!-- Desktop Table (hidden below lg) -->
+		<div class="hidden lg:block">
+			<div class="overflow-hidden rounded-xl border border-neutral-200">
+				<table class="w-full text-sm">
+					<thead>
+						<tr class="bg-primary text-white">
+							<th class="px-6 py-3.5 text-left font-semibold">Produk</th>
+							<th class="px-6 py-3.5 text-center font-semibold">Retail</th>
+							<th class="px-6 py-3.5 text-center font-semibold">Starter</th>
+							<th class="px-6 py-3.5 text-center font-semibold">Business
+								<span class="block text-xs font-normal text-white/70">Diskon 10%</span>
+							</th>
+							<th class="px-6 py-3.5 text-center font-semibold">Enterprise
+								<span class="block text-xs font-normal text-white/70">Diskon 15–20%</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each pricingProducts as product, i}
+							<tr class="{i % 2 === 0 ? 'bg-white' : 'bg-neutral-50'} border-t border-neutral-100">
+								<td class="px-6 py-3.5 font-medium text-neutral-900">{product.name}</td>
+								<td class="px-6 py-3.5 text-center text-neutral-600">{formatPrice(product.retail)}</td>
+								<td class="px-6 py-3.5 text-center text-neutral-600">{formatPrice(product.starter)}</td>
+								<td class="px-6 py-3.5 text-center font-medium text-primary">{formatPrice(product.business)}</td>
+								<td class="px-6 py-3.5 text-center font-bold text-primary">{formatPrice(product.enterprise)}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Mobile Cards (hidden on lg+) -->
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:hidden">
+			{#each pricingProducts as product}
+				<div class="rounded-xl border border-neutral-200 bg-white p-4">
+					<h4 class="text-base font-bold text-neutral-900">{product.name}</h4>
+					<div class="mt-3 space-y-2">
+						<div class="flex items-center justify-between text-sm">
+							<span class="text-neutral-500">Retail</span>
+							<span class="text-neutral-600">{formatPrice(product.retail)}</span>
+						</div>
+						<div class="flex items-center justify-between text-sm">
+							<span class="text-neutral-500">Starter</span>
+							<span class="text-neutral-600">{formatPrice(product.starter)}</span>
+						</div>
+						<div class="flex items-center justify-between text-sm">
+							<span class="text-neutral-500">Business <span class="text-xs text-neutral-400">(10%)</span></span>
+							<span class="font-medium text-primary">{formatPrice(product.business)}</span>
+						</div>
+						<div class="flex items-center justify-between text-sm">
+							<span class="text-neutral-500">Enterprise <span class="text-xs text-neutral-400">(15–20%)</span></span>
+							<span class="font-bold text-primary">{formatPrice(product.enterprise)}</span>
+						</div>
+					</div>
+				</div>
+			{/each}
+		</div>
+
+		<p class="mt-6 text-center text-xs text-neutral-500 italic">
+			*Harga bersifat estimasi dan dapat berubah. Hubungi kami untuk penawaran terbaru.
+		</p>
+	</div>
+</section>
+
+<!-- 5. B2B Extras -->
 <section class="bg-white py-14 sm:py-16">
 	<div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
 		<SectionHeading title="Layanan Tambahan" />
@@ -208,7 +295,7 @@
 	</div>
 </section>
 
-<!-- 5. Inquiry Form -->
+<!-- 6. Inquiry Form -->
 <section id="form" class="bg-primary-surface py-14 sm:py-16">
 	<div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
 		<SectionHeading

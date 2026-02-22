@@ -22,7 +22,7 @@
 
 		<Carousel>
 			{#each posts as post (post._id)}
-				<div class="min-w-0 flex-[0_0_85%] pl-3 sm:flex-auto sm:pl-0">
+				<div class="min-w-0 flex-[0_0_85%] pl-3 sm:flex-auto sm:pl-0 sm:h-full">
 					<BlogCard
 						title={post.title}
 						excerpt={post.excerpt}

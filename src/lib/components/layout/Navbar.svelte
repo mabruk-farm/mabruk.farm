@@ -12,11 +12,9 @@
 	const navLinks = [
 		{ href: '/produk', label: 'Produk' },
 		{ href: '/langganan', label: 'Langganan' },
-		{ href: '/tentang', label: 'Tentang' },
 		{ href: '/kerjasama', label: 'Kerjasama' },
-		{ href: '/eduwisata', label: 'Eduwisata' },
-		{ href: '/blog', label: 'Blog' },
-		{ href: '/kontak', label: 'Kontak' }
+		{ href: '/tentang', label: 'Tentang' },
+		{ href: '/blog', label: 'Blog' }
 	]
 
 	$effect(() => {

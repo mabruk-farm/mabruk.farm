@@ -14,7 +14,7 @@
 	const stars = $derived(Array.from({ length: rating }, (_, i) => i))
 </script>
 
-<div class="relative rounded-xl bg-white p-6 shadow-sm">
+<div class="relative flex h-full flex-col rounded-xl bg-white p-6 shadow-sm">
 	<div
 		class="pointer-events-none absolute left-5 top-4 select-none font-serif text-5xl leading-none text-primary-light opacity-20"
 	>
@@ -27,7 +27,7 @@
 		{/each}
 	</div>
 
-	<blockquote class="relative z-10 text-sm italic leading-relaxed text-neutral-900">
+	<blockquote class="relative z-10 flex-1 text-sm italic leading-relaxed text-neutral-900">
 		"{quote}"
 	</blockquote>
 
