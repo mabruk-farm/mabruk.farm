@@ -4,6 +4,7 @@
 	import Button from './Button.svelte'
 	import { formatPriceWithUnit } from '$lib/utils/format'
 	import { createOrderLink } from '$lib/utils/whatsapp'
+	import { trackWhatsAppClick } from '$lib/utils/analytics'
 
 	interface Props {
 		name: string
@@ -63,7 +64,7 @@
 		<div class="mt-3 flex items-center justify-between">
 			<span class="text-lg font-bold text-secondary">{formatPriceWithUnit(price, unit)}</span>
 			{#if available}
-				<Button variant="whatsapp" href={createOrderLink(name)} class="px-3 py-1.5 text-xs">
+				<Button variant="whatsapp" href={createOrderLink(name)} class="px-3 py-1.5 text-xs" onclick={() => trackWhatsAppClick('product_card', name)}>
 					Pesan
 				</Button>
 			{:else}

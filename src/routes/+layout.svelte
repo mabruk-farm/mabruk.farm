@@ -6,10 +6,10 @@
 	import FloatingActions from '$lib/components/layout/FloatingActions.svelte'
 	import { setChatState } from '$lib/stores/chat.svelte'
 	import { setOrderState } from '$lib/stores/order.svelte'
+	import CookieConsent from '$lib/components/shared/CookieConsent.svelte'
 
 	let { children } = $props()
 
-	const gaId = env.PUBLIC_GA_MEASUREMENT_ID ?? ''
 	const enableAiChat = env.PUBLIC_ENABLE_AI_CHAT === 'true'
 
 	setChatState()
@@ -19,10 +19,6 @@
 <svelte:head>
 	<meta name="theme-color" content="#1B5E20" />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-	{#if gaId}
-		{@html `<script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"><\/script>`}
-		{@html `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${gaId}');<\/script>`}
-	{/if}
 </svelte:head>
 
 <Navbar />
@@ -31,3 +27,4 @@
 </main>
 <Footer />
 <FloatingActions {enableAiChat} />
+<CookieConsent gtmId="GTM-K769SGMN" />

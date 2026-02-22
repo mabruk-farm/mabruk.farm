@@ -2,6 +2,7 @@
 	import { Leaf, Droplets, Sun } from 'lucide-svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import { trackWhatsAppClick, trackCtaClick } from '$lib/utils/analytics'
 
 	const waLink = createWhatsAppLink('Halo Mabruk Farm, saya mau pesan sayuran')
 </script>
@@ -36,10 +37,10 @@
 				</p>
 
 				<div class="mt-8 flex flex-wrap gap-4">
-					<Button variant="whatsapp" href={waLink} class="px-6 py-3 text-sm">
+					<Button variant="whatsapp" href={waLink} class="px-6 py-3 text-sm" onclick={() => trackWhatsAppClick('hero')}>
 						Pesan Sekarang via WhatsApp
 					</Button>
-					<Button variant="outline-light" href="/produk" class="px-6 py-3 text-sm">
+					<Button variant="outline-light" href="/produk" class="px-6 py-3 text-sm" onclick={() => trackCtaClick('lihat_produk', 'hero')}>
 						Lihat Produk Kami
 					</Button>
 				</div>

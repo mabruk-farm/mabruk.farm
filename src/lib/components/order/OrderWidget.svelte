@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { X, Send, Leaf, CheckCircle, MessageCircle } from 'lucide-svelte'
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import { trackOrderWidgetSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 
 	let { onclose }: { onclose: () => void } = $props()
 
@@ -26,6 +27,8 @@
 		message += `\nTerima kasih!`
 
 		const waLink = createWhatsAppLink(message)
+		trackOrderWidgetSubmit(nama.trim())
+		trackWhatsAppClick('order_widget')
 		window.open(waLink, '_blank')
 		isSubmitted = true
 	}

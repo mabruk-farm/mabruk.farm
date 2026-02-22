@@ -7,6 +7,7 @@
 	import { formatPrice, formatPriceWithUnit } from '$lib/utils/format'
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
 	import { createProductJsonLd, createBreadcrumbJsonLd } from '$lib/utils/seo'
+	import { trackProductView, trackProductOrder, trackWhatsAppClick } from '$lib/utils/analytics'
 
 	let { data } = $props()
 
@@ -46,6 +47,12 @@
 				)
 			: ''
 	)
+
+	$effect(() => {
+		if (product) {
+			trackProductView(product.name, product.price, product.category)
+		}
+	})
 
 	let qty = $state(1)
 	let catatan = $state('')
@@ -219,6 +226,12 @@
 							href={buildOrderLink()}
 							target="_blank"
 							rel="noopener noreferrer"
+							onclick={() => {
+								if (product) {
+									trackProductOrder(product.name, qty, subtotal)
+									trackWhatsAppClick('product_detail', product.name)
+								}
+							}}
 							class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
 						>
 							<Send class="h-4 w-4" />

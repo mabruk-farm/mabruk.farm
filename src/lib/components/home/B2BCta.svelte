@@ -3,6 +3,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
 	import { fadeInOnScroll } from '$lib/utils/animate'
+	import { trackWhatsAppClick, trackCtaClick } from '$lib/utils/analytics'
 
 	const waLink = createWhatsAppLink(
 		'Halo Mabruk Farm, saya tertarik untuk kerjasama supply sayuran. Bisa info lebih lanjut?'
@@ -36,10 +37,10 @@
 		</div>
 
 		<div class="mt-10 flex flex-wrap justify-center gap-4">
-			<Button variant="amber" href="/kerjasama" class="px-6 py-3">
+			<Button variant="amber" href="/kerjasama" class="px-6 py-3" onclick={() => trackCtaClick('ajukan_kerjasama', 'homepage_b2b')}>
 				Ajukan Kerjasama
 			</Button>
-			<Button variant="outline-light" href={waLink} class="px-6 py-3">
+			<Button variant="outline-light" href={waLink} class="px-6 py-3" onclick={() => trackWhatsAppClick('b2b_cta')}>
 				Hubungi Langsung
 			</Button>
 		</div>

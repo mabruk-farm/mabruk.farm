@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
+	import { trackFormSubmit, trackWhatsAppClick } from '$lib/utils/analytics'
 
 	let nama = $state('')
 	let company = $state('')
@@ -48,10 +49,12 @@
 			})
 
 			if (res.ok) {
+				trackFormSubmit('kerjasama')
 				submitStatus = 'success'
 				const waLink = createWhatsAppLink(
 					`Halo Mabruk Farm, saya ${nama} dari ${company || '-'}. Saya baru saja mengisi form kerjasama di website. Bisa info lebih lanjut?`
 				)
+				trackWhatsAppClick('kerjasama_form')
 				window.open(waLink, '_blank')
 			} else {
 				submitStatus = 'error'
