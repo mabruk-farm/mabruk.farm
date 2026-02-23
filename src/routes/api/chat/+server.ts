@@ -6,6 +6,10 @@ import { formatPriceWithUnit } from '$lib/utils/format'
 
 const MAX_MESSAGES = 40
 const MAX_CONTENT_LENGTH = 2000
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX = 20
+
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
 const productCatalog = allProducts
 	.filter((p) => p.available)
@@ -40,7 +44,39 @@ Jika tidak tahu jawabannya, arahkan ke WhatsApp admin.
 Jangan jawab pertanyaan di luar topik Mabruk Farm.
 Jawab dengan ringkas dan jelas (maksimal 2–3 paragraf).`
 
+function getClientIp(request: Request): string {
+	return (
+		request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+		request.headers.get('x-real-ip') ||
+		'unknown'
+	)
+}
+
+function isRateLimited(ip: string): boolean {
+	const now = Date.now()
+	const entry = rateLimitMap.get(ip)
+
+	if (!entry || now > entry.resetAt) {
+		rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+		return false
+	}
+
+	entry.count++
+	return entry.count > RATE_LIMIT_MAX
+}
+
 export const POST: RequestHandler = async ({ request }) => {
+	const clientIp = getClientIp(request)
+	if (isRateLimited(clientIp)) {
+		return json(
+			{
+				error:
+					'Terlalu banyak permintaan. Silakan tunggu sebentar atau hubungi kami via WhatsApp di 0852-6945-8526.'
+			},
+			{ status: 429 }
+		)
+	}
+
 	const apiKey = env.LLM_API_KEY
 	const baseUrl = env.LLM_BASE_URL || 'https://opencode.ai/zen/v1'
 	const model = env.LLM_MODEL || 'kimi-k2.5-free'

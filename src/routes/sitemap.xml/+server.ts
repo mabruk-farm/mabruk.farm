@@ -2,6 +2,8 @@ import type { RequestHandler } from './$types'
 import { allProducts } from '$lib/data/products'
 import { allBlogPostsWithBody } from '$lib/data/blogPosts'
 
+export const prerender = true
+
 const SITE_URL = 'https://mabruk.farm'
 
 interface SitemapEntry {
@@ -12,28 +14,36 @@ interface SitemapEntry {
 }
 
 export const GET: RequestHandler = async () => {
-	const today = new Date().toISOString().split('T')[0]
+	const latestBlogDate =
+		allBlogPostsWithBody.length > 0
+			? allBlogPostsWithBody
+					.map((p) => p.publishedAt)
+					.sort()
+					.reverse()[0]
+			: '2026-02-22'
+
+	const DEPLOY_DATE = '2026-02-22'
 
 	const staticPages: SitemapEntry[] = [
-		{ loc: '', lastmod: today, changefreq: 'weekly', priority: '1.0' },
-		{ loc: '/produk', lastmod: today, changefreq: 'weekly', priority: '0.8' },
-		{ loc: '/kerjasama', lastmod: today, changefreq: 'monthly', priority: '0.8' },
-		{ loc: '/tentang', lastmod: today, changefreq: 'monthly', priority: '0.7' },
-		{ loc: '/kontak', lastmod: today, changefreq: 'monthly', priority: '0.7' },
-		{ loc: '/blog', lastmod: today, changefreq: 'weekly', priority: '0.7' },
-		{ loc: '/langganan', lastmod: today, changefreq: 'monthly', priority: '0.8' },
-		{ loc: '/cara-pesan', lastmod: today, changefreq: 'monthly', priority: '0.6' },
-		{ loc: '/area-pengiriman', lastmod: today, changefreq: 'monthly', priority: '0.6' },
-		{ loc: '/faq', lastmod: today, changefreq: 'monthly', priority: '0.6' },
-		{ loc: '/galeri', lastmod: today, changefreq: 'monthly', priority: '0.5' },
-		{ loc: '/eduwisata', lastmod: today, changefreq: 'monthly', priority: '0.5' },
-		{ loc: '/privasi', lastmod: today, changefreq: 'yearly', priority: '0.3' },
-		{ loc: '/syarat-ketentuan', lastmod: today, changefreq: 'yearly', priority: '0.3' }
+		{ loc: '', lastmod: latestBlogDate, changefreq: 'weekly', priority: '1.0' },
+		{ loc: '/produk', lastmod: DEPLOY_DATE, changefreq: 'weekly', priority: '0.8' },
+		{ loc: '/kerjasama', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.8' },
+		{ loc: '/tentang', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.7' },
+		{ loc: '/kontak', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.7' },
+		{ loc: '/blog', lastmod: latestBlogDate, changefreq: 'weekly', priority: '0.7' },
+		{ loc: '/langganan', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.8' },
+		{ loc: '/cara-pesan', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.6' },
+		{ loc: '/area-pengiriman', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.6' },
+		{ loc: '/faq', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.6' },
+		{ loc: '/galeri', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.5' },
+		{ loc: '/eduwisata', lastmod: DEPLOY_DATE, changefreq: 'monthly', priority: '0.5' },
+		{ loc: '/privasi', lastmod: DEPLOY_DATE, changefreq: 'yearly', priority: '0.3' },
+		{ loc: '/syarat-ketentuan', lastmod: DEPLOY_DATE, changefreq: 'yearly', priority: '0.3' }
 	]
 
 	const productPages: SitemapEntry[] = allProducts.map((p) => ({
 		loc: `/produk/${p.slug.current}`,
-		lastmod: today,
+		lastmod: DEPLOY_DATE,
 		changefreq: 'weekly',
 		priority: '0.7'
 	}))

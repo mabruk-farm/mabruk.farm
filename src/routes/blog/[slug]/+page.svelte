@@ -58,6 +58,8 @@
 					<img
 						src={post.coverImageUrl}
 						alt={post.title}
+						width="960"
+						height="540"
 						class="h-full w-full object-cover"
 					/>
 				{:else}
@@ -89,6 +91,8 @@
 					<!-- Portable Text from Sanity -->
 					{#await import('@portabletext/svelte') then { PortableText }}
 						<PortableText value={post.body} />
+					{:catch}
+						<p class="italic text-neutral-500">Gagal memuat konten artikel.</p>
 					{/await}
 				{:else if post.bodyPlaintext}
 					<!-- Static plaintext paragraphs -->

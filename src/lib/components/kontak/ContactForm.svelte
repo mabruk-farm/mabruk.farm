@@ -37,7 +37,7 @@
 </script>
 
 {#if submitStatus === 'success'}
-	<div class="rounded-xl bg-primary-surface p-8 text-center">
+	<div role="alert" class="rounded-xl bg-primary-surface p-8 text-center">
 		<p class="text-lg font-bold text-primary">Pesan Terkirim!</p>
 		<p class="mt-2 text-sm text-neutral-600">
 			WhatsApp sudah terbuka. Silakan kirim pesan untuk melanjutkan chat dengan tim kami.

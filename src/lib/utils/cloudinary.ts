@@ -1,10 +1,10 @@
 import { Cloudinary } from '@cloudinary/url-gen'
 import { scale } from '@cloudinary/url-gen/actions/resize'
-import { PUBLIC_CLOUDINARY_CLOUD_NAME } from '$env/static/public'
+import { env } from '$env/dynamic/public'
 
 export const cld = new Cloudinary({
 	cloud: {
-		cloudName: PUBLIC_CLOUDINARY_CLOUD_NAME
+		cloudName: env.PUBLIC_CLOUDINARY_CLOUD_NAME ?? 'dkmovhvou'
 	}
 })
 

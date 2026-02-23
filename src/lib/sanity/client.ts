@@ -1,15 +1,15 @@
 import { createClient } from '@sanity/client'
-import {
-	PUBLIC_SANITY_PROJECT_ID,
-	PUBLIC_SANITY_DATASET
-} from '$env/static/public'
+import { env } from '$env/dynamic/public'
 
-export const isSanityConfigured = Boolean(PUBLIC_SANITY_PROJECT_ID)
+const projectId = env.PUBLIC_SANITY_PROJECT_ID ?? ''
+const dataset = env.PUBLIC_SANITY_DATASET ?? 'production'
+
+export const isSanityConfigured = Boolean(projectId)
 
 export const sanityClient = isSanityConfigured
 	? createClient({
-			projectId: PUBLIC_SANITY_PROJECT_ID,
-			dataset: PUBLIC_SANITY_DATASET || 'production',
+			projectId,
+			dataset,
 			apiVersion: '2026-02-22',
 			useCdn: true
 		})
