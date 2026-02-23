@@ -1,4 +1,6 @@
-import { PUBLIC_SITE_URL } from '$env/static/public'
+import { env } from '$env/dynamic/public'
+
+const PUBLIC_SITE_URL = env.PUBLIC_SITE_URL ?? 'https://mabruk.farm'
 
 export interface MetaTags {
 	title: string

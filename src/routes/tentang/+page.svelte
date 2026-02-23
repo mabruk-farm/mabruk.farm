@@ -5,7 +5,7 @@
 	import { getIcon } from '$lib/utils/icons'
 
 	let { data } = $props()
-	const { pageData } = data
+	const pageData = $derived(data.pageData)
 
 	const breadcrumbJsonLd = JSON.stringify(
 		createBreadcrumbJsonLd([

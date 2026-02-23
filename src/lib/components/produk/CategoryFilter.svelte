@@ -9,12 +9,13 @@
 	let { categories, active, onselect, disabledCategories = [] }: Props = $props()
 </script>
 
-<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<div role="group" aria-label="Filter kategori" class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
 	{#each categories as category}
 		{@const isDisabled = disabledCategories.includes(category)}
 		{@const isActive = active === category}
 		<button
 			type="button"
+			aria-pressed={isActive}
 			class="flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors {isActive
 				? 'bg-primary text-white'
 				: isDisabled

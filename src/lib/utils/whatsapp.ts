@@ -1,8 +1,10 @@
-import { PUBLIC_WHATSAPP_NUMBER } from '$env/static/public'
+import { env } from '$env/dynamic/public'
+
+const WA_NUMBER = env.PUBLIC_WHATSAPP_NUMBER ?? '6285269458526'
 
 export function createWhatsAppLink(message: string): string {
 	const encoded = encodeURIComponent(message)
-	return `https://wa.me/${PUBLIC_WHATSAPP_NUMBER}?text=${encoded}`
+	return `https://wa.me/${WA_NUMBER}?text=${encoded}`
 }
 
 export function createOrderLink(productName: string): string {

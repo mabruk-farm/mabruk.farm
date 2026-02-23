@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state'
+	import { afterNavigate } from '$app/navigation'
 	import { Menu, X } from 'lucide-svelte'
 	import { createWhatsAppLink } from '$lib/utils/whatsapp'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -25,8 +26,8 @@
 		return () => window.removeEventListener('scroll', handleScroll)
 	})
 
-	$effect(() => {
-		void page.url.pathname
+	// Close mobile menu on navigation
+	afterNavigate(() => {
 		isMenuOpen = false
 	})
 
